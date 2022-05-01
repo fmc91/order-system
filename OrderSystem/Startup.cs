@@ -24,6 +24,8 @@ namespace OrderSystem
             app.UseStaticFiles();
             app.UseRouting();
 
+            app.UseCors();
+
             app.UseEndpoints(routes =>
             {
                 routes.MapControllers();
@@ -34,6 +36,15 @@ namespace OrderSystem
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+
+            services.AddCors(options =>
+                options.AddDefaultPolicy(policy =>
+                {
+                    policy.AllowAnyOrigin()
+                        .AllowAnyHeader()
+                        .AllowAnyMethod();
+                })
+            );
 
             services.AddDbContext<OrderSystemContext>(builder =>
             {
