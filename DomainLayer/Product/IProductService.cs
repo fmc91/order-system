@@ -27,5 +27,6 @@ namespace DomainLayer
         Task<Category> CreateCategory(Category category);
 
         Task UpdateCategoryAsync(Category category);
+        Task RemoveCategoryAsync(int id);
     }
 }

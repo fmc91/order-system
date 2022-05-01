@@ -87,6 +87,9 @@ namespace DomainLayer
 
         public async Task<Order> CreateOrderAsync(Order order)
         {
+            if (order.OrderId != 0)
+                throw new InvalidOperationException("Entity primary key must be equal to zero to create a new entity.");
+
             var orderEntity = _mapper.Map<EntityModel.Order>(order);
 
             _db.Order.Update(orderEntity);
@@ -97,6 +100,9 @@ namespace DomainLayer
 
         public async Task UpdateOrderAsync(Order order)
         {
+            if (order.OrderId == 0)
+                throw new InvalidOperationException("Entity primary key must be non-zero to update an entity.");
+
             var orderEntity = _db.Order.Find(order.OrderId) ??
                 throw new InvalidOperationException($"No record found in the Order table with id {order.OrderId}.");
 

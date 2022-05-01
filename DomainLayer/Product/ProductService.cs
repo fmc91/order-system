@@ -65,6 +65,9 @@ namespace DomainLayer
 
         public async Task<Product> CreateProductAsync(Product product)
         {
+            if (product.ProductId != 0)
+                throw new InvalidOperationException("Entity primary key must be equal to zero to create a new entity.");
+
             var productEntity = _mapper.Map<EntityModel.Product>(product);
 
             _db.Product.Update(productEntity);
@@ -75,6 +78,9 @@ namespace DomainLayer
 
         public async Task UpdateProductAsync(Product product)
         {
+            if (product.ProductId == 0)
+                throw new InvalidOperationException("Entity primary key must be non-zero to update an entity.");
+
             var productEntity = _db.Product.Find(product.ProductId) ??
                 throw new InvalidOperationException($"No record found in the Product table with id {product.ProductId}.");
 
@@ -124,6 +130,9 @@ namespace DomainLayer
 
         public async Task<Category> CreateCategory(Category category)
         {
+            if (category.CategoryId != 0)
+                throw new InvalidOperationException("Entity primary key must be equal to zero to create a new entity.");
+
             var categoryEntity = _mapper.Map<EntityModel.Category>(category);
 
             _db.Category.Update(categoryEntity);
@@ -134,6 +143,9 @@ namespace DomainLayer
 
         public async Task UpdateCategoryAsync(Category category)
         {
+            if (category.CategoryId == 0)
+                throw new InvalidOperationException("Entity primary key must be non-zero to update an entity.");
+
             var categoryEntity = _db.Category.Find(category.CategoryId) ??
                 throw new InvalidOperationException($"No record found in the Category table with id {category.CategoryId}.");
 

@@ -11,9 +11,12 @@ namespace OrderSystem.Controllers
     {
         private readonly IProductService _productService;
 
-        public ProductController(IProductService productService)
+        private readonly IOrderService _orderService;
+
+        public ProductController(IProductService productService, IOrderService orderService)
         {
             _productService = productService;
+            _orderService = orderService;
         }
 
         [HttpGet]
@@ -25,9 +28,9 @@ namespace OrderSystem.Controllers
         }
 
         [HttpGet("search")]
-        public async Task<IActionResult> GetProductsByNameSearchAsync(string query)
+        public async Task<IActionResult> GetProductsByNameSearchAsync(string query, int page = 0, int itemsPerPage = 20)
         {
-            var result = await _productService.GetProductsByNameSearch(query);
+            var result = await _productService.GetProductsByNameSearchAsync(query, page, itemsPerPage);
 
             return Ok(result);
         }
@@ -47,9 +50,10 @@ namespace OrderSystem.Controllers
         }
 
         [HttpGet("{id:int}/order")]
-        public async Task<IActionResult> GetOrdersByProductAsync(int id)
+        public async Task<IActionResult> GetOrdersByProductAsync(int id, int page = 0, int itemsPerPage = 20)
         {
-            throw new NotImplementedException();
+            var result = await _orderService.GetOrdersByProductAsync(id, page, itemsPerPage);
+            return Ok(result);
         }
 
         [HttpGet("{id:int}/stock-item")]
@@ -61,20 +65,20 @@ namespace OrderSystem.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateProductAsync([FromBody] Product product)
         {
-            if (product.ProductId != 0)
-                return BadRequest(new { errorMessage = "Entity primary key must be equal to zero to create a new entity." });
-
-            var result = await _productService.CreateProductAsync(product);
-
-            return CreatedAtAction("GetProduct", new { id = result.ProductId }, result);
+            try
+            {
+                var result = await _productService.CreateProductAsync(product);
+                return CreatedAtAction("GetProduct", new { id = result.ProductId }, result);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { errorMessage = ex.Message });
+            }
         }
 
         [HttpPut]
         public async Task<IActionResult> UpdateProductAsync([FromBody] Product product)
         {
-            if (product.ProductId != 0)
-                return BadRequest(new { errorMessage = "Entity primary key must be non-zero to update an entity." });
-
             try
             {
                 await _productService.UpdateProductAsync(product);

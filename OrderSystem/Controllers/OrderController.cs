@@ -40,20 +40,20 @@ namespace OrderSystem.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateOrderAsync([FromBody] Order order)
         {
-            if (order.OrderId != 0)
-                return BadRequest(new { errorMessage = "Entity primary key must be equal to zero to create a new entity." });
-
-            var result = await _orderService.CreateOrderAsync(order);
-
-            return CreatedAtAction("GetOrder", new { id = result.OrderId }, result);
+            try
+            {
+                var result = await _orderService.CreateOrderAsync(order);
+                return CreatedAtAction("GetOrder", new { id = result.OrderId }, result);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { errorMessage = ex.Message });
+            }
         }
 
         [HttpPut]
         public async Task<IActionResult> UpdateOrderAsync([FromBody] Order order)
         {
-            if (order.OrderId != 0)
-                return BadRequest(new { errorMessage = "Entity primary key must be non-zero to update an entity." });
-
             try
             {
                 await _orderService.UpdateOrderAsync(order);
