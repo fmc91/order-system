@@ -41,19 +41,23 @@ namespace DomainLayer
             return _mapper.Map<Product>(productEntity);
         }
 
-        public async Task<IList<Product>> GetProductsByNameSearch(string query)
+        public async Task<IList<Product>> GetProductsByNameSearchAsync(string query, int page, int itemsPerPage)
         {
             var productEntities = await _db.Product
                 .Where(x => x.Name.Contains(query))
+                .Skip(page * itemsPerPage)
+                .Take(itemsPerPage)
                 .ToListAsync();
 
             return _mapper.Map<List<Product>>(productEntities);
         }
 
-        public async Task<IList<Product>> GetProductsByCategoryId(int categoryId)
+        public async Task<IList<Product>> GetProductsByCategoryAsync(int categoryId, int page, int itemsPerPage)
         {
             var productEntities = await _db.Product
                 .Where(x => x.CategoryId == categoryId)
+                .Skip(page * itemsPerPage)
+                .Take(itemsPerPage)
                 .ToListAsync();
 
             return _mapper.Map<List<Product>>(productEntities);
@@ -107,10 +111,12 @@ namespace DomainLayer
             return _mapper.Map<Category>(categoryEntity);
         }
 
-        public async Task<IList<Category>> GetCategoriesByNameSearchAsync(string query)
+        public async Task<IList<Category>> GetCategoriesByNameSearchAsync(string query, int page, int itemsPerPage)
         {
             var categoryEntities = await _db.Category
                 .Where(x => x.Name.Contains(query))
+                .Skip(page * itemsPerPage)
+                .Take(itemsPerPage)
                 .ToListAsync();
 
             return _mapper.Map<List<Category>>(categoryEntities);
@@ -126,7 +132,7 @@ namespace DomainLayer
             return _mapper.Map<Category>(categoryEntity);
         }
 
-        public async Task UpdateCategory(Category category)
+        public async Task UpdateCategoryAsync(Category category)
         {
             var categoryEntity = _db.Category.Find(category.CategoryId) ??
                 throw new InvalidOperationException($"No record found in the Category table with id {category.CategoryId}.");

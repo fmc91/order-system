@@ -4,10 +4,10 @@ namespace DomainLayer.ProductModel
 {
     public class Product
     {
-        public Product(int productId, Category category, string name, ProductSize size, decimal price)
+        public Product(int productId, int categoryId, string name, ProductSize size, decimal price)
         {
             ProductId = productId;
-            Category = category;
+            CategoryId = categoryId;
             Name = name;
             Size = size;
             Price = price;
@@ -15,11 +15,13 @@ namespace DomainLayer.ProductModel
 
         public int ProductId { get; set; }
 
-        public Category Category { get; set; }
+        public int CategoryId { get; set; }
 
         public string Name { get; set; }
 
         public string? Description { get; set; }
+
+        public string? CategoryName { get; set; }
 
         public ProductSize Size { get; set; }
 
