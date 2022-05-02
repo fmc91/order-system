@@ -12,7 +12,7 @@ using EntityModel = DataLayer.Model;
 
 namespace DomainLayer
 {
-    public class DistributionCentreService
+    public class DistributionCentreService : IDistributionCentreService
     {
         private readonly OrderSystemContext _db;
 
