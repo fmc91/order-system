@@ -101,7 +101,18 @@ namespace DomainLayer
             return _mapper.Map<List<StockItem>>(stockItemEntities);
         }
 
-        public async Task<StockItem> CreateStockItem(StockItem stockItem)
+        public async Task<IList<StockItem>> GetStockItemsByProductAsync(int productId, int page, int itemsPerPage)
+        {
+            var stockItemEntities = await _db.StockItem
+                .Where(x => x.ProductId == productId)
+                .Skip(page * itemsPerPage)
+                .Take(itemsPerPage)
+                .ToListAsync();
+
+            return _mapper.Map<List<StockItem>>(stockItemEntities);
+        }
+
+        public async Task<StockItem> CreateStockItemAsync(StockItem stockItem)
         {
             if (_db.StockItem.Any(x => x.ProductId == stockItem.ProductId && x.DistributionCentreId == stockItem.DistributionCentreId))
                 throw new InvalidOperationException("An entity with the given primary key already exists in the StockItem table.");
@@ -114,7 +125,7 @@ namespace DomainLayer
             return _mapper.Map<StockItem>(stockItemEntity);
         }
 
-        public async Task UpdateStockItem(StockItem stockItem)
+        public async Task UpdateStockItemAsync(StockItem stockItem)
         {
             if (stockItem.ProductId == 0 || stockItem.DistributionCentreId == 0)
                 throw new InvalidOperationException("Entity primary key must be non-zero to update an entity.");

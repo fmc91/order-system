@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DomainLayer.Common
+namespace DomainLayer.DistributionCentreModel
 {
     public class StockItem
     {
