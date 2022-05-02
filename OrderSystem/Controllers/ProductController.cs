@@ -43,9 +43,9 @@ namespace OrderSystem.Controllers
                 var result = await _productService.GetProductByIdAsync(id);
                 return Ok(result);
             }
-            catch (InvalidOperationException ex)
+            catch (EntityNotFoundException ex)
             {
-                return BadRequest(new { errorMessage = ex.Message });
+                return NotFound(new { errorMessage = ex.Message });
             }
         }
 
@@ -84,6 +84,10 @@ namespace OrderSystem.Controllers
                 await _productService.UpdateProductAsync(product);
                 return NoContent();
             }
+            catch (EntityNotFoundException ex)
+            {
+                return NotFound(new { errorMessage = ex.Message });
+            }
             catch (InvalidOperationException ex)
             {
                 return BadRequest(new { errorMessage = ex.Message });
@@ -98,9 +102,9 @@ namespace OrderSystem.Controllers
                 await _productService.RemoveProductAsync(id);
                 return NoContent();
             }
-            catch (InvalidOperationException ex)
+            catch (EntityNotFoundException ex)
             {
-                return BadRequest(new { errorMessage = ex.Message });
+                return NotFound(new { errorMessage = ex.Message });
             }
         }
     }

@@ -36,7 +36,7 @@ namespace DomainLayer
         public async Task<Product> GetProductByIdAsync(int productId)
         {
             var productEntity = await _db.Product.FindAsync(productId) ??
-                throw new InvalidOperationException($"No record found in the Product table with id {productId}.");
+                throw new EntityNotFoundException("Product", productId);
 
             return _mapper.Map<Product>(productEntity);
         }
@@ -82,17 +82,17 @@ namespace DomainLayer
                 throw new InvalidOperationException("Entity primary key must be non-zero to update an entity.");
 
             var productEntity = _db.Product.Find(product.ProductId) ??
-                throw new InvalidOperationException($"No record found in the Product table with id {product.ProductId}.");
+                throw new EntityNotFoundException("Product", product.ProductId);
 
             _mapper.Map(product, productEntity);
 
             await _db.SaveChangesAsync();
         }
 
-        public async Task RemoveProductAsync(int id)
+        public async Task RemoveProductAsync(int productId)
         {
-            var productEntity = _db.Product.Find(id) ??
-                throw new InvalidOperationException($"No record found in the Product table with id {id}.");
+            var productEntity = _db.Product.Find(productId) ??
+                throw new EntityNotFoundException("Product", productId);
 
             _db.Product.Remove(productEntity);
 
@@ -112,7 +112,7 @@ namespace DomainLayer
         public async Task<Category> GetCategoryByIdAsync(int categoryId)
         {
             var categoryEntity = await _db.Category.FindAsync(categoryId) ??
-                throw new InvalidOperationException($"No record found in the Category table with id {categoryId}.");
+                throw new EntityNotFoundException("Category", categoryId);
 
             return _mapper.Map<Category>(categoryEntity);
         }
@@ -147,17 +147,17 @@ namespace DomainLayer
                 throw new InvalidOperationException("Entity primary key must be non-zero to update an entity.");
 
             var categoryEntity = _db.Category.Find(category.CategoryId) ??
-                throw new InvalidOperationException($"No record found in the Category table with id {category.CategoryId}.");
+                throw new EntityNotFoundException("Category", category.CategoryId);
 
             _mapper.Map(category, categoryEntity);
 
             await _db.SaveChangesAsync();
         }
 
-        public async Task RemoveCategoryAsync(int id)
+        public async Task RemoveCategoryAsync(int categoryId)
         {
-            var categoryEntity = _db.Category.Find(id) ??
-                throw new InvalidOperationException($"No record found in the Category table with id {id}.");
+            var categoryEntity = _db.Category.Find(categoryId) ??
+                throw new EntityNotFoundException("Category", categoryId);
 
             _db.Category.Remove(categoryEntity);
 

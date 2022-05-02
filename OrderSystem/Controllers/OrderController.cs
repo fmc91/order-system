@@ -31,9 +31,9 @@ namespace OrderSystem.Controllers
                 var result = await _orderService.GetOrderByIdAsync(id);
                 return Ok(result);
             }
-            catch (InvalidOperationException ex)
+            catch (EntityNotFoundException ex)
             {
-                return BadRequest(new { errorMessage = ex.Message });
+                return NotFound(new { errorMessage = ex.Message });
             }
         }
 
@@ -58,6 +58,10 @@ namespace OrderSystem.Controllers
             {
                 await _orderService.UpdateOrderAsync(order);
                 return NoContent();
+            }
+            catch (EntityNotFoundException ex)
+            {
+                return BadRequest(new { errorMessage = ex.Message });
             }
             catch (InvalidOperationException ex)
             {

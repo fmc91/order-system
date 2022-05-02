@@ -36,7 +36,7 @@ namespace DomainLayer
         public async Task<Customer> GetCustomerByIdAsync(int customerId)
         {
             var customerEntity = await _db.Customer.FindAsync(customerId) ??
-                throw new InvalidOperationException($"No record found in the Customer table with id {customerId}.");
+                throw new EntityNotFoundException("Customer", customerId);
 
             return _mapper.Map<Customer>(customerEntity);
         }
@@ -82,7 +82,7 @@ namespace DomainLayer
                 throw new InvalidOperationException("Entity primary key must be non-zero to update an entity.");
 
             var customerEntity = _db.Customer.Find(customer.CustomerId) ??
-                throw new InvalidOperationException($"No record found in the Customer table with id {customer.CustomerId}.");
+                throw new EntityNotFoundException("Customer", customer.CustomerId);
 
             _mapper.Map(customer, customerEntity);
 
