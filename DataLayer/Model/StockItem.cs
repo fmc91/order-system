@@ -17,7 +17,6 @@ namespace DataLayer.Model
             DistributionCentreId = distributionCentreId;
             ProductId = productId;
             Quantity = quantity;
-            OrderItems = new HashSet<OrderItem>();
         }
 
         public int DistributionCentreId { get; set; }
@@ -39,7 +38,5 @@ namespace DataLayer.Model
                 throw new InvalidOperationException($"Uninitialized property: {Product}");
             set => _product = value;
         }
-
-        public virtual ICollection<OrderItem> OrderItems { get; }
     }
 }
