@@ -17,9 +17,12 @@ namespace OrderSystem.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllDistributionCentresAsync(int page = 0, int itemsPerPage = 20)
+        public async Task<IActionResult> GetAllDistributionCentresAsync(string? country = null, int page = 0, int itemsPerPage = 20)
         {
-            var result = await _distributionCentreService.GetAllDistributionCentresAsync(page, itemsPerPage);
+            var result = country == null ?
+                await _distributionCentreService.GetAllDistributionCentresAsync(page, itemsPerPage) :
+                await _distributionCentreService.GetDistributionCentresByCountryCodeAsync(country, page, itemsPerPage);
+
             return Ok(result);
         }
 
@@ -27,13 +30,6 @@ namespace OrderSystem.Controllers
         public async Task<IActionResult> GetDistributionCentresByNameSearchAsync(string query, int page = 0, int itemsPerPage = 20)
         {
             var result = await _distributionCentreService.GetDistributionCentresByNameSearchAsync(query, page, itemsPerPage);
-            return Ok(result);
-        }
-
-        [HttpGet("location")]
-        public async Task<IActionResult> GetDistributionCentresByCountryCodeAsync(string country, int page = 0, int itemsPerPage = 20)
-        {
-            var result = await _distributionCentreService.GetDistributionCentresByCountryCodeAsync(country, page, itemsPerPage);
             return Ok(result);
         }
 
