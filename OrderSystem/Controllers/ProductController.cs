@@ -13,10 +13,13 @@ namespace OrderSystem.Controllers
 
         private readonly IOrderService _orderService;
 
-        public ProductController(IProductService productService, IOrderService orderService)
+        private readonly IDistributionCentreService _distributionCentreService;
+
+        public ProductController(IProductService productService, IOrderService orderService, IDistributionCentreService distributionCentreService)
         {
             _productService = productService;
             _orderService = orderService;
+            _distributionCentreService = distributionCentreService;
         }
 
         [HttpGet]
@@ -57,9 +60,10 @@ namespace OrderSystem.Controllers
         }
 
         [HttpGet("{id:int}/stock-item")]
-        public async Task<IActionResult> GetStockItemsByProductAsync(int id)
+        public async Task<IActionResult> GetStockItemsByProductAsync(int id, int page = 0, int itemsPerPage = 20)
         {
-            throw new NotImplementedException();
+            var result = await _distributionCentreService.GetStockItemsByProductAsync(id, page, itemsPerPage);
+            return Ok(result);
         }
 
         [HttpPost]
