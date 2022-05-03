@@ -2,7 +2,9 @@
 using Microsoft.EntityFrameworkCore;
 using DataLayer;
 using AutoMapper;
+using AutoMapper.EquivalencyExpression;
 using DomainLayer.Profiles;
+using AutoMapper.EntityFrameworkCore;
 
 namespace OrderSystem
 {
@@ -61,6 +63,8 @@ namespace OrderSystem
 
         private MapperConfiguration CreateMapperConfig() => new MapperConfiguration(cfg =>
         {
+            cfg.AddCollectionMappers();
+            cfg.SetGeneratePropertyMaps<GenerateEntityFrameworkCorePrimaryKeyPropertyMaps<OrderSystemContext>>();
             cfg.AddProfile<ProductProfile>();
         });
     }

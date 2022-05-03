@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
+using AutoMapper.EquivalencyExpression;
 using DomainLayer.ProductModel;
 using EntityModel = DataLayer.Model;
 
