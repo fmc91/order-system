@@ -19,5 +19,6 @@ namespace DomainLayer
         Task<Order> CreateOrderAsync(Order order);
 
         Task UpdateOrderAsync(Order order);
+        Task<IList<Order>> GetOrdersByRegionAsync(int regionId, int page, int itemsPerPage);
     }
 }

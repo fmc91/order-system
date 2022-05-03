@@ -44,6 +44,17 @@ namespace DomainLayer
             return _mapper.Map<List<Order>>(orderEntities);
         }
 
+        public async Task<IList<Order>> GetOrdersByRegionAsync(int regionId, int page, int itemsPerPage)
+        {
+            var orderEntities = await _db.Order
+                .Where(x => x.Customer.RegionId == regionId)
+                .Skip(page * itemsPerPage)
+                .Take(itemsPerPage)
+                .ToListAsync();
+
+            return _mapper.Map<List<Order>>(orderEntities);
+        }
+
         public async Task<IList<Order>> GetOrdersByCarrierAsync(int carrierId, int page, int itemsPerPage)
         {
             var orderEntities = await _db.Order
