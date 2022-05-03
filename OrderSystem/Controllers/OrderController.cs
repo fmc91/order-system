@@ -61,7 +61,7 @@ namespace OrderSystem.Controllers
             }
             catch (EntityNotFoundException ex)
             {
-                return BadRequest(new { errorMessage = ex.Message });
+                return NotFound(new { errorMessage = ex.Message });
             }
             catch (InvalidOperationException ex)
             {
