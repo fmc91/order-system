@@ -26,7 +26,7 @@ namespace OrderSystem.Controllers
             return Ok(result);
         }
 
-        [HttpGet("{int:id}")]
+        [HttpGet("{id:int}")]
         public async Task<IActionResult> GetCarrierAsync(int id)
         {
             try
@@ -40,7 +40,7 @@ namespace OrderSystem.Controllers
             }
         }
 
-        [HttpGet("{int:id}/order")]
+        [HttpGet("{id:int}/order")]
         public async Task<IActionResult> GetOrdersByCarrierAsync(int id, int page = 0, int itemsPerPage = 20)
         {
             var result = await _orderService.GetOrdersByCarrierAsync(id, page, itemsPerPage);

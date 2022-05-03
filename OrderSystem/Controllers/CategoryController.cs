@@ -83,7 +83,7 @@ namespace OrderSystem.Controllers
             }
         }
 
-        [HttpDelete("{int:id}")]
+        [HttpDelete("{id:int}")]
         public async Task<IActionResult> RemoveCategoryAsync(int id)
         {
             try

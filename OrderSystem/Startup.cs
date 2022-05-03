@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using DataLayer;
+using AutoMapper;
+using DomainLayer.Profiles;
 
 namespace OrderSystem
 {
@@ -35,6 +37,8 @@ namespace OrderSystem
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSingleton<AutoMapper.IConfigurationProvider>(CreateMapperConfig());
+
             services.AddControllers();
 
             services.AddCors(options =>
@@ -46,11 +50,18 @@ namespace OrderSystem
                 })
             );
 
+            services.AddTransient<IMapper, Mapper>();
+
             services.AddDbContext<OrderSystemContext>(builder =>
             {
                 builder.UseSqlServer(_configuration.GetConnectionString("OrderSystem"))
                     .UseLazyLoadingProxies();
             });
         }
+
+        private MapperConfiguration CreateMapperConfig() => new MapperConfiguration(cfg =>
+        {
+            cfg.AddProfile<ProductProfile>();
+        });
     }
 }

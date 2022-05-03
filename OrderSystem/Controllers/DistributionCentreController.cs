@@ -33,7 +33,7 @@ namespace OrderSystem.Controllers
             return Ok(result);
         }
 
-        [HttpGet("{int:id}")]
+        [HttpGet("{id:int}")]
         public async Task<IActionResult> GetDistributionCentreAsync(int id)
         {
             try
@@ -47,7 +47,7 @@ namespace OrderSystem.Controllers
             }
         }
 
-        [HttpGet("{int:id}/stock-item")]
+        [HttpGet("{id:int}/stock-item")]
         public async Task<IActionResult> GetStockItemsByDistributionCentreAsync(int id, int page = 0, int itemsPerPage = 20)
         {
             var result = await _distributionCentreService.GetStockItemsByDistributionCentreAsync(id, page, itemsPerPage);

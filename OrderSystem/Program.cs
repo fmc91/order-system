@@ -5,18 +5,17 @@ namespace OrderSystem
     {
         public static async Task Main(string[] args)
         {
-            var app = CreateApplicationBuilder().Build();
-
-            await app.RunAsync();
-        }
-
-        public static WebApplicationBuilder CreateApplicationBuilder()
-        {
             var builder = WebApplication.CreateBuilder();
 
-            builder.WebHost.UseStartup<Startup>();
+            var startup = new Startup(builder.Configuration);
+            startup.ConfigureServices(builder.Services);
 
-            return builder;
+            var app = builder.Build();
+            startup.Configure(app, app.Environment);
+
+            DataSeeder.SeedData(app);
+
+            await app.RunAsync();
         }
     }
 }

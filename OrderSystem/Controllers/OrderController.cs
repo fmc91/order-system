@@ -23,7 +23,7 @@ namespace OrderSystem.Controllers
             return Ok(result);
         }
 
-        [HttpGet("{id:int")]
+        [HttpGet("{id:int}")]
         public async Task<IActionResult> GetOrderAsync(int id)
         {
             try

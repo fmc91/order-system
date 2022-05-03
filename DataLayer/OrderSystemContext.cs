@@ -101,7 +101,7 @@ namespace DataLayer
 
             modelBuilder.Entity<StockItem>()
                 .HasOne(x => x.DistributionCentre)
-                .WithMany()
+                .WithMany(x => x.StockItems)
                 .HasForeignKey(x => x.DistributionCentreId);
 
             modelBuilder.Entity<OrderItem>()
@@ -157,7 +157,7 @@ namespace DataLayer
             modelBuilder.Entity<DistributionCentreAddress>()
                 .HasOne(x => x.DistributionCentre)
                 .WithOne(x => x.DistributionCentreAddress)
-                .HasForeignKey<DistributionCentre>(x => x.DistributionCentreId);
+                .HasForeignKey<DistributionCentreAddress>(x => x.DistributionCentreId);
 
             modelBuilder.Entity<DistributionCentreAddress>()
                 .HasOne(x => x.Address)
