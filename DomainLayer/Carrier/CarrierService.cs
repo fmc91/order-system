@@ -23,7 +23,7 @@ namespace DomainLayer
             _mapper = mapper;
         }
 
-        public async Task<IList<Carrier>> GetAllCarriers(int page, int itemsPerPage)
+        public async Task<IList<Carrier>> GetAllCarriersAsync(int page, int itemsPerPage)
         {
             var carrierEntities = await _db.Carrier
                 .Skip(page * itemsPerPage)
@@ -33,7 +33,7 @@ namespace DomainLayer
             return _mapper.Map<List<Carrier>>(carrierEntities);
         }
 
-        public async Task<Carrier> GetCarrierById(int carrierId)
+        public async Task<Carrier> GetCarrierByIdAsync(int carrierId)
         {
             var carrierEntity = await _db.Carrier.FindAsync(carrierId) ??
                 throw new EntityNotFoundException("Carrier", carrierId);
