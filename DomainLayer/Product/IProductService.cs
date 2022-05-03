@@ -24,7 +24,7 @@ namespace DomainLayer
 
         Task<IList<Category>> GetCategoriesByNameSearchAsync(string query, int page, int itemsPerPage);
 
-        Task<Category> CreateCategory(Category category);
+        Task<Category> CreateCategoryAysnc(Category category);
 
         Task UpdateCategoryAsync(Category category);
         Task RemoveCategoryAsync(int id);

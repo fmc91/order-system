@@ -128,7 +128,7 @@ namespace DomainLayer
             return _mapper.Map<List<Category>>(categoryEntities);
         }
 
-        public async Task<Category> CreateCategory(Category category)
+        public async Task<Category> CreateCategoryAysnc(Category category)
         {
             if (category.CategoryId != 0)
                 throw new InvalidOperationException("Entity primary key must be equal to zero to create a new entity.");
