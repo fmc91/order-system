@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using DomainLayer;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace OrderSystem.Controllers
@@ -7,6 +8,13 @@ namespace OrderSystem.Controllers
     [ApiController]
     public class RegionController : ControllerBase
     {
+        private readonly ICustomerService _customerService;
+
+        public RegionController(ICustomerService customerService)
+        {
+            _customerService = customerService;
+        }
+
         [HttpGet]
         public async Task<IActionResult> GetAllRegionsAsync()
         {

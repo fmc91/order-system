@@ -88,5 +88,48 @@ namespace DomainLayer
 
             await _db.SaveChangesAsync();
         }
+
+        public async Task<IList<Region>> GetAllRegionsAsync(int page, int itemsPerPage)
+        {
+            var regionEntities = await _db.Region
+                .Skip(page * itemsPerPage)
+                .Take(itemsPerPage)
+                .ToListAsync();
+
+            return _mapper.Map<List<Region>>(regionEntities);
+        }
+
+        public async Task<Region> GetRegionByIdAsync(int regionId)
+        {
+            var regionEntity = await _db.Region.FindAsync(regionId) ??
+                throw new EntityNotFoundException("Region", regionId);
+
+            return _mapper.Map<Region>(regionEntity);
+        }
+
+        public async Task UpdateRegionAsync(Region region)
+        {
+            if (region.RegionId == 0)
+                throw new InvalidOperationException("Entity primary key must be non-zero to update an entity.");
+
+            var regionEntity = await _db.Region.FindAsync(region.RegionId) ??
+                throw new EntityNotFoundException("Region", region.RegionId);
+
+            _mapper.Map(region, regionEntity);
+            await _db.SaveChangesAsync();
+        }
+
+        public async Task<Region> CreateRegionAsync(Region region)
+        {
+            if (region.RegionId != 0)
+                throw new InvalidOperationException("Entity primary key must be equal to zero to create a new entity.");
+
+            var regionEntity = _mapper.Map<EntityModel.Region>(region);
+            
+            _db.Region.Update(regionEntity);
+            await _db.SaveChangesAsync();
+
+            return _mapper.Map<Region>(regionEntity);
+        }
     }
 }
