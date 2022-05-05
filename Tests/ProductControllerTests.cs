@@ -6,6 +6,7 @@ using Common;
 using OrderSystem.Controllers;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using System;
 
 namespace Tests
 {
@@ -61,6 +62,26 @@ namespace Tests
 
             Assert.IsInstanceOf<NotFoundObjectResult>(result);
             var notFoundResult = (NotFoundObjectResult)result;
+
+            Assert.AreEqual("Foobar", ((dynamic)notFoundResult.Value!).errorMessage);
+        }
+
+        [Test]
+        public async Task CreateProductTest_NonZeroPrimaryKey()
+        {
+            var mockProductService = new Mock<IProductService>();
+            var mockOrderService = new Mock<IOrderService>();
+            var mockDistributionCentreService = new Mock<IDistributionCentreService>();
+
+            mockProductService.Setup(x => x.CreateProductAsync(It.Is<Product>(x => x.ProductId != 0)))
+                .Throws(() => new InvalidOperationException("Foobar"));
+
+            var sut = new ProductController(mockProductService.Object, mockOrderService.Object, mockDistributionCentreService.Object);
+
+            var result = await sut.CreateProductAsync(new Product(1, 1, "Foo", ProductSize.Small, 99.99m));
+
+            Assert.IsInstanceOf<BadRequestObjectResult>(result);
+            var notFoundResult = (BadRequestObjectResult)result;
 
             Assert.AreEqual("Foobar", ((dynamic)notFoundResult.Value!).errorMessage);
         }
