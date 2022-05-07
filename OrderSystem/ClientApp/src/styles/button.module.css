@@ -1,0 +1,28 @@
+.button {
+    padding: 6px 20px;
+    border-radius: 6px;
+    border: none;
+    font-size: 12pt;
+}
+
+.button:hover {
+    cursor: pointer;
+}
+
+.buttonPrimary {
+    background-color: rgb(50, 150, 235);
+    color: white;
+}
+
+.buttonPrimary:active {
+    background-color: rgb(75, 170, 240);
+}
+
+.buttonDanger {
+    background-color: rgb(235, 35, 35);
+    color: white;
+}
+
+.buttonDanger:active {
+    background-color: rgb(240, 65, 65);
+}

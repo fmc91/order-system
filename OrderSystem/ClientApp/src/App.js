@@ -1,29 +1,47 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useContext } from 'react';
+import ProductsContext from './contexts/products-context';
 import ProductList from './components/ProductList';
+import EditProductModal from './components/EditProductModal';
+import { FormContextProvider } from './components/forms/form-context';
 
 export default function App() {
     
-    const [products, setProducts] = useState([]);
+    const productsContext = useContext(ProductsContext);
 
-    useEffect(() =>
-    {
-        async function loadData()
-        {
-            const response = await fetch("https://localhost:7133/api/product");
+    const [showEditModal, setShowEditModal] = useState(false);
+    const [idOfProductToEdit, setIdOfProductToEdit] = useState(null);
 
-            if (!response.ok)
-            {
-                console.error(`Received response code ${response.status} when attempting to get products.`);
-                return;
-            }
+    function handleEditButtonClick(id) {
+        setIdOfProductToEdit(id);
+        setShowEditModal(true);
+    }
 
-            var content = await response.json();
-            setProducts(content);
-        }
+    function handleDeleteButtonClick(id) {
+        productsContext.removeProduct(id);
+    }
 
-        loadData();
-        
-    }, []);
+    function handleEditProduct(product) {
+        console.log(product);
+    }
+
+    function handleDismissModal() {
+        setShowEditModal(false);
+        setIdOfProductToEdit(null);
+    }
+
+    var editProductModal =
+        <FormContextProvider onSubmit={handleEditProduct}>
+            <EditProductModal
+                productId={idOfProductToEdit}
+                onDismiss={handleDismissModal}/>
+        </FormContextProvider>;
     
-    return <ProductList products={products}/>;
+    return (
+        <React.Fragment>
+            <ProductList
+                onEditButtonClick={handleEditButtonClick}
+                onDeleteButtonClick={handleDeleteButtonClick}/>
+            {showEditModal && editProductModal}
+        </React.Fragment>
+    );
 }

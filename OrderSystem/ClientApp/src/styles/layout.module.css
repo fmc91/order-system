@@ -1,0 +1,29 @@
+.dockContainer {
+    display: flex;
+}
+
+.horizontalDockContainer {
+    flex-direction: row;
+}
+
+.verticalDockContainer {
+    flex-direction: column;
+}
+
+.dockContainer :not(.dockItem) {
+    width: 100%;
+}
+
+.autoDockContainer {
+    display: flex;
+}
+
+.autoDockContainerLeft {
+    flex-direction: row;
+    justify-content: start;
+}
+
+.autoDockContainerRight {
+    flex-direction: row;
+    justify-content: end;
+}
