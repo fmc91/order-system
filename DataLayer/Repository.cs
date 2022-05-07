@@ -20,7 +20,7 @@ namespace DataLayer
             _mapper = mapper;
         }
 
-        public async Task<bool> Exists(object id)
+        public async Task<bool> ExistsAsync(object id)
         {
             return await _db.Set<TEntity>().FindAsync(id) != null;
         }

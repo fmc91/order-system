@@ -3,7 +3,7 @@ namespace DataLayer
 {
     public interface IRepository<TModel, TEntity> where TEntity : class
     {
-        Task<bool> Exists(object id);
+        Task<bool> ExistsAsync(object id);
 
         Task<IList<TModel>> GetAllAsync();
 
