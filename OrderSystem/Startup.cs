@@ -1,11 +1,12 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
-using DataLayer;
 using AutoMapper;
 using AutoMapper.EquivalencyExpression;
-using DomainLayer.Profiles;
 using AutoMapper.EntityFrameworkCore;
-using DomainLayer;
+using DataLayer;
+using DataLayer.Model;
+using OrderSystem.Model;
+using OrderSystem.Profiles;
 
 namespace OrderSystem
 {
@@ -61,11 +62,11 @@ namespace OrderSystem
 
             services.AddSingleton<AutoMapper.IConfigurationProvider>(CreateMapperConfig(services));
 
-            services.AddScoped<ICarrierService, CarrierService>()
-                .AddScoped<ICustomerService, CustomerService>()
-                .AddScoped<IDistributionCentreService, DistributionCentreService>()
-                .AddScoped<IOrderService, OrderService>()
-                .AddScoped<IProductService, ProductService>();
+            services.AddScoped<RepositoryProvider>();
+
+            services.AddScoped<IRepository<ProductModel, Product>, Repository<ProductModel, Product>>()
+                .AddScoped<IRepository<OrderModel, Order>, Repository<OrderModel, Order>>()
+                .AddScoped<IRepository<StockItemModel, StockItem>, Repository<StockItemModel, StockItem>>();
         }
 
         private MapperConfiguration CreateMapperConfig(IServiceCollection services) => new MapperConfiguration(cfg =>
