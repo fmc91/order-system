@@ -1,0 +1,15 @@
+.dockContainer {
+    display: flex;
+}
+
+.horizontalDockContainer {
+    flex-direction: row;
+}
+
+.verticalDockContainer {
+    flex-direction: column;
+}
+
+.dockContainer :not(.dockItem) {
+    width: 100%;
+}

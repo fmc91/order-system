@@ -1,4 +1,5 @@
 ﻿using Common;
+using System.Text.Json.Serialization;
 
 namespace DomainLayer.ProductModel
 {
@@ -23,6 +24,7 @@ namespace DomainLayer.ProductModel
 
         public string? CategoryName { get; set; }
 
+        [JsonConverter(typeof(JsonStringEnumConverter))]
         public ProductSize Size { get; set; }
 
         public decimal Price { get; set; }

@@ -5,6 +5,7 @@ using AutoMapper;
 using AutoMapper.EquivalencyExpression;
 using DomainLayer.Profiles;
 using AutoMapper.EntityFrameworkCore;
+using DomainLayer;
 
 namespace OrderSystem
 {
@@ -39,8 +40,6 @@ namespace OrderSystem
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSingleton<AutoMapper.IConfigurationProvider>(CreateMapperConfig());
-
             services.AddControllers();
 
             services.AddCors(options =>
@@ -59,12 +58,20 @@ namespace OrderSystem
                 builder.UseSqlServer(_configuration.GetConnectionString("OrderSystem"))
                     .UseLazyLoadingProxies();
             });
+
+            services.AddSingleton<AutoMapper.IConfigurationProvider>(CreateMapperConfig(services));
+
+            services.AddScoped<ICarrierService, CarrierService>()
+                .AddScoped<ICustomerService, CustomerService>()
+                .AddScoped<IDistributionCentreService, DistributionCentreService>()
+                .AddScoped<IOrderService, OrderService>()
+                .AddScoped<IProductService, ProductService>();
         }
 
-        private MapperConfiguration CreateMapperConfig() => new MapperConfiguration(cfg =>
+        private MapperConfiguration CreateMapperConfig(IServiceCollection services) => new MapperConfiguration(cfg =>
         {
             cfg.AddCollectionMappers();
-            cfg.SetGeneratePropertyMaps<GenerateEntityFrameworkCorePrimaryKeyPropertyMaps<OrderSystemContext>>();
+            cfg.UseEntityFrameworkCoreModel<OrderSystemContext>(services);
             cfg.AddProfile<ProductProfile>();
         });
     }
