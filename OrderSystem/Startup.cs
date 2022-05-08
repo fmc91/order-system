@@ -64,9 +64,9 @@ namespace OrderSystem
 
             services.AddScoped<RepositoryProvider>();
 
-            services.AddScoped<IRepository<ProductModel, Product>, Repository<ProductModel, Product>>()
-                .AddScoped<IRepository<OrderModel, Order>, Repository<OrderModel, Order>>()
-                .AddScoped<IRepository<StockItemModel, StockItem>, Repository<StockItemModel, StockItem>>();
+            services.AddScoped<IRepository<Product>, Repository<Product>>()
+                .AddScoped<IRepository<Order>, Repository<Order>>()
+                .AddScoped<IRepository<StockItem>, Repository<StockItem>>();
         }
 
         private MapperConfiguration CreateMapperConfig(IServiceCollection services) => new MapperConfiguration(cfg =>

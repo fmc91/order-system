@@ -10,23 +10,23 @@ namespace OrderSystem.Controllers
     [ApiController]
     public class ProductController : ControllerBase
     {
-        private readonly IRepository<ProductModel, Product> _productRepository;
+        private readonly IRepository<Product> _productRepository;
 
-        private readonly IRepository<OrderModel, Order> _orderRepository;
+        private readonly IRepository<Order> _orderRepository;
 
-        private readonly IRepository<StockItemModel, StockItem> _stockItemRepository;
+        private readonly IRepository<StockItem> _stockItemRepository;
 
         public ProductController(RepositoryProvider repositoryProvider)
         {
-            _productRepository = repositoryProvider.GetRepository<ProductModel, Product>();
-            _orderRepository = repositoryProvider.GetRepository<OrderModel, Order>();
-            _stockItemRepository = repositoryProvider.GetRepository<StockItemModel, StockItem>();
+            _productRepository = repositoryProvider.GetRepository<Product>();
+            _orderRepository = repositoryProvider.GetRepository<Order>();
+            _stockItemRepository = repositoryProvider.GetRepository<StockItem>();
         }
 
         [HttpGet]
         public async Task<IActionResult> GetProductsAsync(int page = 0, int itemsPerPage = 20)
         {
-            var result = await _productRepository.QueryAsync(x => x
+            var result = await _productRepository.QueryAsync<ProductModel>(x => x
                 .OrderBy(p => p.Name)
                 .Skip(page * itemsPerPage)
                 .Take(itemsPerPage));
@@ -37,7 +37,7 @@ namespace OrderSystem.Controllers
         [HttpGet("search")]
         public async Task<IActionResult> GetProductsByNameSearchAsync(string query, int page = 0, int itemsPerPage = 20)
         {
-            var result = await _productRepository.QueryAsync(x => x
+            var result = await _productRepository.QueryAsync<ProductModel>(x => x
                 .Where(p => p.Name.Contains(query))
                 .OrderBy(p => p.Name)
                 .Skip(page * itemsPerPage)
@@ -52,7 +52,7 @@ namespace OrderSystem.Controllers
             if (!await _productRepository.ExistsAsync(id))
                 return NotFound();
 
-            var result = await _productRepository.GetByIdAsync(id);
+            var result = await _productRepository.GetByIdAsync<ProductModel>(id);
             return Ok(result);
         }
 
@@ -62,7 +62,7 @@ namespace OrderSystem.Controllers
             if (!await _productRepository.ExistsAsync(id))
                 return NotFound();
 
-            var result = await _orderRepository.QueryAsync(x => x
+            var result = await _orderRepository.QueryAsync<ProductModel>(x => x
                 .Where(o => o.OrderItems.Any(p => p.ProductId == id))
                 .Skip(page * itemsPerPage)
                 .Take(itemsPerPage));
@@ -76,7 +76,7 @@ namespace OrderSystem.Controllers
             if (!await _productRepository.ExistsAsync(id))
                 return NotFound();
 
-            var result = await _stockItemRepository.QueryAsync(x => x
+            var result = await _stockItemRepository.QueryAsync<ProductModel>(x => x
                 .Where(i => i.ProductId == id)
                 .Skip(page * itemsPerPage)
                 .Take(itemsPerPage));

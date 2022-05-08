@@ -8,7 +8,7 @@ using AutoMapper;
 
 namespace DataLayer
 {
-    public class Repository<TModel, TEntity> : IRepository<TModel, TEntity> where TEntity : class
+    public class Repository<TEntity> : IRepository<TEntity> where TEntity : class
     {
         private readonly OrderSystemContext _db;
 
@@ -25,35 +25,35 @@ namespace DataLayer
             return await _db.Set<TEntity>().FindAsync(id) != null;
         }
 
-        public async Task<IList<TModel>> GetAllAsync()
+        public async Task<IList<TModel>> GetAllAsync<TModel>()
         {
             var entities = await _db.Set<TEntity>().ToListAsync();
 
             return _mapper.Map<List<TModel>>(entities);
         }
 
-        public async Task<IList<TModel>> QueryAsync(Func<IQueryable<TEntity>, IQueryable<TEntity>> query)
+        public async Task<IList<TModel>> QueryAsync<TModel>(Func<IQueryable<TEntity>, IQueryable<TEntity>> query)
         {
             var queryResult = await query(_db.Set<TEntity>()).ToListAsync();
 
             return _mapper.Map<List<TModel>>(queryResult);
         }
 
-        public async Task<TModel> QuerySingleAsync(Func<IQueryable<TEntity>, Task<TEntity>> query)
+        public async Task<TModel> QuerySingleAsync<TModel>(Func<IQueryable<TEntity>, Task<TEntity>> query)
         {
             var queryResult = await query(_db.Set<TEntity>());
 
             return _mapper.Map<TModel>(queryResult);
         }
 
-        public async Task<TModel?> QuerySingleOrDefaultAsync(Func<IQueryable<TEntity>, Task<TEntity?>> query)
+        public async Task<TModel?> QuerySingleOrDefaultAsync<TModel>(Func<IQueryable<TEntity>, Task<TEntity?>> query)
         {
             var queryResult = await query(_db.Set<TEntity>());
 
             return queryResult == null ? default : _mapper.Map<TModel>(queryResult);
         }
 
-        public async Task<TModel> GetByIdAsync(object id)
+        public async Task<TModel> GetByIdAsync<TModel>(object id)
         {
             var entity = await _db.Set<TEntity>().FindAsync(id) ??
                 throw new EntityNotFoundException(typeof(TEntity).Name, id);
@@ -61,7 +61,7 @@ namespace DataLayer
             return _mapper.Map<TModel>(entity);
         }
 
-        public async Task<TModel> AddAsync(TModel item)
+        public async Task<TModel> AddAsync<TModel>(TModel item)
         {
             var entity = _mapper.Map<TEntity>(item);
 
@@ -71,7 +71,7 @@ namespace DataLayer
             return _mapper.Map<TModel>(entity);
         }
 
-        public async Task UpdateAsync(object id, TModel item)
+        public async Task UpdateAsync<TModel>(object id, TModel item)
         {
             var entity = await _db.Set<TEntity>().FindAsync(id) ??
                 throw new EntityNotFoundException(typeof(TEntity).Name, id);

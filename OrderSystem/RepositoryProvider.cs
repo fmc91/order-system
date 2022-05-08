@@ -11,9 +11,9 @@ namespace OrderSystem
             _services = services;
         }
 
-        public IRepository<TModel, TEntity> GetRepository<TModel, TEntity>() where TEntity : class
+        public IRepository<TEntity> GetRepository<TEntity>() where TEntity : class
         {
-            return _services.GetRequiredService<IRepository<TModel, TEntity>>();
+            return _services.GetRequiredService<IRepository<TEntity>>();
         }
     }
 }

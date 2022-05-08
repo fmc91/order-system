@@ -1,23 +1,23 @@
 ﻿
 namespace DataLayer
 {
-    public interface IRepository<TModel, TEntity> where TEntity : class
+    public interface IRepository<TEntity> where TEntity : class
     {
         Task<bool> ExistsAsync(object id);
 
-        Task<IList<TModel>> GetAllAsync();
+        Task<IList<TModel>> GetAllAsync<TModel>();
 
-        Task<TModel> GetByIdAsync(object id);
+        Task<TModel> GetByIdAsync<TModel>(object id);
 
-        Task<IList<TModel>> QueryAsync(Func<IQueryable<TEntity>, IQueryable<TEntity>> query);
+        Task<IList<TModel>> QueryAsync<TModel>(Func<IQueryable<TEntity>, IQueryable<TEntity>> query);
 
-        Task<TModel> QuerySingleAsync(Func<IQueryable<TEntity>, Task<TEntity>> query);
+        Task<TModel> QuerySingleAsync<TModel>(Func<IQueryable<TEntity>, Task<TEntity>> query);
 
-        Task<TModel?> QuerySingleOrDefaultAsync(Func<IQueryable<TEntity>, Task<TEntity?>> query);
+        Task<TModel?> QuerySingleOrDefaultAsync<TModel>(Func<IQueryable<TEntity>, Task<TEntity?>> query);
 
-        Task<TModel> AddAsync(TModel item);
+        Task<TModel> AddAsync<TModel>(TModel item);
 
-        Task UpdateAsync(object id, TModel item);
+        Task UpdateAsync<TModel>(object id, TModel item);
 
         Task RemoveAsync(object id);
     }
