@@ -1,7 +1,8 @@
-﻿using DomainLayer;
-using DomainLayer.CarrierModel;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using DataLayer;
+using DataLayer.Model;
+using OrderSystem.Model;
 
 namespace OrderSystem.Controllers
 {
@@ -9,74 +10,72 @@ namespace OrderSystem.Controllers
     [ApiController]
     public class CarrierController : ControllerBase
     {
-        private readonly ICarrierService _carrierService;
+        private readonly IRepository<Carrier> _carrierRepository;
 
-        private readonly IOrderService _orderService;
+        private readonly IRepository<Order> _orderRepository;
 
-        public CarrierController(ICarrierService carrierService, IOrderService orderService)
+        public CarrierController(RepositoryProvider repositoryProvider)
         {
-            _carrierService = carrierService;
-            _orderService = orderService;
+            _carrierRepository = repositoryProvider.GetRepository<Carrier>();
+            _orderRepository = repositoryProvider.GetRepository<Order>();
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAllCarriersAsync(int page = 0, int itemsPerPage = 20)
         {
-            var result = await _carrierService.GetAllCarriersAsync(page, itemsPerPage);
+            var result = await _carrierRepository.QueryAsync<CarrierModel>(x => x
+                .OrderBy(c => c.Name)
+                .Skip(page * itemsPerPage)
+                .Take(itemsPerPage));
+
             return Ok(result);
         }
 
         [HttpGet("{id:int}")]
         public async Task<IActionResult> GetCarrierAsync(int id)
         {
-            try
-            {
-                var result = await _carrierService.GetCarrierByIdAsync(id);
-                return Ok(result);
-            }
-            catch (EntityNotFoundException ex)
-            {
-                return NotFound(new { errorMessage = ex.Message });
-            }
+            if (!await _carrierRepository.ExistsAsync(id))
+                return NotFound();
+
+            var result = await _carrierRepository.GetByIdAsync<CarrierModel>(id);
+            return Ok(result);
         }
 
         [HttpGet("{id:int}/order")]
         public async Task<IActionResult> GetOrdersByCarrierAsync(int id, int page = 0, int itemsPerPage = 20)
         {
-            var result = await _orderService.GetOrdersByCarrierAsync(id, page, itemsPerPage);
+            if (!await _carrierRepository.ExistsAsync(id))
+                return NotFound();
+
+            var result = await _orderRepository.QueryAsync<OrderModel>(x => x
+                .Where(o => o.CarrierId == id)
+                .Skip(page * itemsPerPage)
+                .Take(itemsPerPage));
+            
             return Ok(result);
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateCarrierAsync([FromBody] Carrier carrier)
+        public async Task<IActionResult> CreateCarrierAsync([FromBody] CarrierModel carrier)
         {
-            try
-            {
-                var result = await _carrierService.CreateCarrier(carrier);
-                return CreatedAtAction("GetCarrier", new { id = result.CarrierId }, result);
-            }
-            catch (InvalidOperationException ex)
-            {
-                return BadRequest(new { errorMessage = ex.Message });
-            }
+            if (carrier.CarrierId != 0)
+                return BadRequest();
+
+            var result = await _carrierRepository.AddAsync(carrier);
+            return CreatedAtAction("GetCarrier", new { id = carrier.CarrierId }, result);
         }
 
         [HttpPut]
-        public async Task<IActionResult> UpdateCarrierAsync([FromBody] Carrier carrier)
+        public async Task<IActionResult> UpdateCarrierAsync([FromBody] CarrierModel carrier)
         {
-            try
-            {
-                await _carrierService.UpdateCarrier(carrier);
-                return NoContent();
-            }
-            catch (EntityNotFoundException ex)
-            {
-                return NotFound(new { errorMessage = ex.Message });
-            }
-            catch (InvalidOperationException ex)
-            {
-                return BadRequest(new { errorMessage = ex.Message });
-            }
+            if (carrier.CarrierId == 0)
+                return BadRequest();
+
+            if (!await _carrierRepository.ExistsAsync(carrier.CarrierId))
+                return NotFound();
+
+            await _carrierRepository.UpdateAsync(carrier.CarrierId, carrier);
+            return NoContent();
         }
     }
 }
