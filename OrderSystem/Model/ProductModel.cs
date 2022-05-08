@@ -5,12 +5,11 @@ namespace OrderSystem.Model
 {
     public class ProductModel
     {
-        public ProductModel(int productId, int categoryId, string name, ProductSize size, decimal price)
+        public ProductModel(int productId, int categoryId, string name, decimal price)
         {
             ProductId = productId;
             CategoryId = categoryId;
             Name = name;
-            Size = size;
             Price = price;
         }
 
@@ -24,9 +23,10 @@ namespace OrderSystem.Model
 
         public string? CategoryName { get; set; }
 
-        [JsonConverter(typeof(JsonStringEnumConverter))]
-        public ProductSize Size { get; set; }
-
         public decimal Price { get; set; }
+
+        public Size Size { get; set; }
+
+        public double Weight { get; set; }
     }
 }

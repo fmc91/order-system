@@ -34,6 +34,8 @@ namespace OrderSystem.Model
 
         public OrderStatus Status { get; set; }
 
+        public DateTime OrderPlaced { get; set; }
+
         public List<OrderItem> Items { get; }
 
         public decimal Subtotal => Items.Sum(x => x.ItemTotal);

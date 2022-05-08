@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,12 +11,11 @@ namespace DataLayer.Model
     {
         private Category? _category;
 
-        public Product(int productId, int categoryId, string name, ProductSize size, decimal price)
+        public Product(int productId, int categoryId, string name, decimal price)
         {
             ProductId = productId;
             CategoryId = categoryId;
             Name = name;
-            Size = size;
             Price = price;
             StockItems = new HashSet<StockItem>();
             OrderItems = new HashSet<OrderItem>();
@@ -29,9 +29,16 @@ namespace DataLayer.Model
 
         public string? Description { get; set; }
 
-        public ProductSize Size { get; set; }
-
+        [Column(TypeName = "money")]
         public decimal Price { get; set; }
+
+        public double Weight { get; set; }
+
+        public double Length { get; set; }
+
+        public double Width { get; set; }
+
+        public double Height { get; set; }
 
         public virtual Category Category
         {

@@ -21,12 +21,12 @@ namespace OrderSystem
             db.SaveChanges();
 
             db.Product.AddRange(
-                new Product(0, speakers.CategoryId, "12\" Reever Professional Speakers", ProductSize.Large, 240),
-                new Product(0, speakers.CategoryId, "16\" Bulgari Live Audio Speakers", ProductSize.Large, 280),
-                new Product(0, microphones.CategoryId, "Allure A68 Vocal Microphone", ProductSize.Small, 180),
-                new Product(0, microphones.CategoryId, "Mannheim M250 Heavy-Duty PA Microphone", ProductSize.Small, 150),
-                new Product(0, decks.CategoryId, "Apocalypsis AX800 Professional Mixing Deck", ProductSize.ExtraLarge, 1200),
-                new Product(0, decks.CategoryId, "Systemik Platinum P5 Live Mixing Deck", ProductSize.ExtraLarge, 980));
+                new Product(0, speakers.CategoryId, "12\" Reever Professional Speakers", 240),
+                new Product(0, speakers.CategoryId, "16\" Bulgari Live Audio Speakers", 280),
+                new Product(0, microphones.CategoryId, "Allure A68 Vocal Microphone", 180),
+                new Product(0, microphones.CategoryId, "Mannheim M250 Heavy-Duty PA Microphone", 150),
+                new Product(0, decks.CategoryId, "Apocalypsis AX800 Professional Mixing Deck", 1200),
+                new Product(0, decks.CategoryId, "Systemik Platinum P5 Live Mixing Deck", 980));
 
             db.SaveChanges();
         }

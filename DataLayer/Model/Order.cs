@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,13 +15,12 @@ namespace DataLayer.Model
 
         public DistributionCentre? _distributionCentre;
 
-        public Order(int orderId, int carrierId, int customerId, int distributionCentreId, OrderStatus status)
+        public Order(int orderId, int carrierId, int customerId, int distributionCentreId)
         {
             OrderId = orderId;
             CarrierId = carrierId;
             CustomerId = customerId;
             DistributionCentreId = distributionCentreId;
-            Status = status;
             OrderItems = new HashSet<OrderItem>();
         }
 
@@ -32,9 +32,12 @@ namespace DataLayer.Model
 
         public int DistributionCentreId { get; set; }
 
+        [Column(TypeName = "money")]
         public decimal ShippingCost { get; set; }
 
         public OrderStatus Status { get; set; }
+
+        public DateTime OrderPlaced { get; set; }
 
         public virtual Carrier Carrier
         {
