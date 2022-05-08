@@ -1,5 +1,5 @@
-﻿using Common;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
+using DataLayer;
 
 namespace OrderSystem.Model
 {

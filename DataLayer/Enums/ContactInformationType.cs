@@ -1,4 +1,4 @@
-﻿namespace Common
+﻿namespace DataLayer
 {
     public enum ContactInformationType
     {
