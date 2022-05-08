@@ -15,20 +15,28 @@ export default function ProductCard(props) {
     return (
         <div className={classList([common.card, styles.listItem])}>
             <div className={classList([layout.dockContainer, layout.horizontalDockContainer])}>
-                <div className={styles.productName}>
-                    {props.product.name}
-                </div>
-                <div className={classList([styles.productSize, layout.dockItem])}>
-                    {props.product.size}
-                </div>
-            </div>
-
-            <div className={classList([layout.dockContainer, layout.horizontalDockContainer])}>
                 <div>
-                    <div className={styles.category}>{props.product.categoryName}</div>
-                    <div className={styles.description}>{props.product.description}</div>
+                    <div className={styles.productName}>
+                        {props.product.name}
+                    </div>
+                    <div className={styles.category}>
+                        {props.product.categoryName}
+                    </div>
+                    <div className={styles.description}>
+                        {props.product.description}
+                    </div>
                 </div>
-                <div className={classList([styles.price, layout.dockItem])}>{price}</div>
+                <div className={layout.dockItem}>
+                    <div className={styles.productSize}>
+                        {props.product.size.length}mm x {props.product.size.width}mm x {props.product.size.height}mm
+                    </div>
+                    <div className={styles.productWeight}>
+                        {props.product.weight}kg
+                    </div>
+                    <div className={styles.price}>
+                        {price}
+                    </div>
+                </div>
             </div>
 
             <div className={classList([layout.autoDockContainer, layout.dockItemsRight, styles.buttonStrip])}>
