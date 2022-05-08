@@ -11,6 +11,7 @@ import classList from "../class-list";
 import layout from "../styles/layout.module.css";
 import button from "../styles/button.module.css";
 import Input from "./forms/Input";
+import TextArea from "./forms/TextArea";
 
 export default function EditProductModal(props) {
 
@@ -29,7 +30,7 @@ export default function EditProductModal(props) {
     const priceRule = useMemo(() => new CompositeValidationRule([requiredRule, minPriceRule]));
 
     const textInput = useCallback(() => <Input type="text"/>, []);
-
+    const textArea = useCallback(() => <TextArea rows="5"/>, []);
     const numberInput = useCallback(() => <Input type="number" min={0.01} step={0.01}/>, []);
 
     return (
@@ -70,7 +71,7 @@ export default function EditProductModal(props) {
                             <InputGroup
                                 //type="text"
                                 label="Description"
-                                renderInput={textInput}
+                                renderInput={textArea}
                                 inputKey="editProduct__desc"/>
                         </InputContextProvider>
                     </div>

@@ -1,0 +1,19 @@
+.textArea {
+    padding: 4px 8px;
+    border: 1px solid rgb(80, 80, 80);
+    border-radius: 6px;
+    resize: vertical;
+    min-height: 25px;
+    max-height: 200px;
+}
+
+.textArea:focus {
+    border: 1px solid rgb(76, 185, 252);
+    background-color: rgb(235, 247, 255);
+    outline: none;
+}
+
+.textArea.invalid.touched {
+    border: 1px solid red;
+    background-color: rgb(255, 223, 218);
+}
