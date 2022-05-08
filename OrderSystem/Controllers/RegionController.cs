@@ -1,7 +1,8 @@
-﻿using DomainLayer;
-using DomainLayer.CustomerModel;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using DataLayer;
+using DataLayer.Model;
+using OrderSystem.Model;
 
 namespace OrderSystem.Controllers
 {
@@ -9,81 +10,85 @@ namespace OrderSystem.Controllers
     [ApiController]
     public class RegionController : ControllerBase
     {
-        private readonly ICustomerService _customerService;
+        private readonly IRepository<Region> _regionRepository;
 
-        private readonly IOrderService _orderService;
+        private readonly IRepository<Customer> _customerRepository;
 
-        public RegionController(ICustomerService customerService, IOrderService orderService)
+        private readonly IRepository<Order> _orderRepository;
+
+        public RegionController(RepositoryProvider repositoryProvider)
         {
-            _customerService = customerService;
-            _orderService = orderService;
+            _regionRepository = repositoryProvider.GetRepository<Region>();
+            _customerRepository = repositoryProvider.GetRepository<Customer>();
+            _orderRepository = repositoryProvider.GetRepository<Order>();
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAllRegionsAsync(int page, int itemsPerPage)
         {
-            var result = await _customerService.GetAllRegionsAsync(page, itemsPerPage);
+            var result = await _regionRepository.QueryAsync<RegionModel>(x => x
+                .Paginate(page, itemsPerPage));
+
             return Ok(result);
         }
 
         [HttpGet("{id:int}")]
         public async Task<IActionResult> GetRegionAsync(int id)
         {
-            try
-            {
-                var result = await _customerService.GetRegionByIdAsync(id);
-                return Ok(result);
-            }
-            catch (EntityNotFoundException ex)
-            {
-                return NotFound(new { errorMessage = ex.Message });
-            }
+            if (!await _regionRepository.ExistsAsync(id))
+                return NotFound();
+
+            var result = await _regionRepository.GetByIdAsync<RegionModel>(id);
+            return Ok(result);
         }
 
         [HttpGet("{id:int}/customer")]
         public async Task<IActionResult> GetCustomersByRegionAsync(int id, int page, int itemsPerPage)
         {
-            var result = await _customerService.GetCustomersByRegionAsync(id, page, itemsPerPage);
+            if (!await _regionRepository.ExistsAsync(id))
+                return NotFound();
+
+            var result = await _customerRepository.QueryAsync<CustomerModel>(x => x
+                .Where(c => c.RegionId == id)
+                .OrderBy(c => c.Name)
+                .Paginate(page, itemsPerPage));
+
             return Ok(result);
         }
 
         [HttpGet("{id:int}/order")]
         public async Task<IActionResult> GetOrdersByRegionAsync(int id, int page, int itemsPerPage)
         {
-            var result = await _orderService.GetOrdersByRegionAsync(id, page, itemsPerPage);
+            if (!await _regionRepository.ExistsAsync(id))
+                return NotFound();
+
+            var result = await _orderRepository.QueryAsync<OrderModel>(x => x
+                .Where(o => o.Customer.RegionId == id));
+
             return Ok(result);
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateRegionAsync([FromBody] Region region)
+        public async Task<IActionResult> CreateRegionAsync([FromBody] RegionModel region)
         {
-            try
-            {
-                var result = await _customerService.CreateRegionAsync(region);
-                return CreatedAtAction("GetRegion", new { id = result.RegionId }, result);
-            }
-            catch (InvalidOperationException ex)
-            {
-                return BadRequest(new { errorMessage = ex.Message });
-            }
+            if (region.RegionId != 0)
+                return BadRequest();
+
+            var result = await _regionRepository.AddAsync(region);
+            return CreatedAtAction("GetRegion", new { id = result.RegionId }, result);
         }
 
         [HttpPut]
-        public async Task<IActionResult> UpdateRegionAsync([FromBody] Region region)
+        public async Task<IActionResult> UpdateRegionAsync([FromBody] RegionModel region)
         {
-            try
-            {
-                await _customerService.UpdateRegionAsync(region);
-                return NoContent();
-            }
-            catch (EntityNotFoundException ex)
-            {
-                return NotFound(new { errorMessage = ex.Message });
-            }
-            catch (InvalidOperationException ex)
-            {
-                return BadRequest(new { errorMessage = ex.Message });
-            }
+            if (region.RegionId == 0)
+                return BadRequest();
+
+            if (!await _regionRepository.ExistsAsync(region.RegionId))
+                return NotFound();
+
+            await _regionRepository.UpdateAsync(region.RegionId, region);
+            return NoContent();
         }
     }
 }
