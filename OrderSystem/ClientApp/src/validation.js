@@ -1,11 +1,12 @@
 
 export class RequiredValidationRule {
     validate(value) {
-        return !!value;
+        return value !== undefined && value !== null && value !== "";
     }
 }
 
 export class RangeValidationRule {
+
     constructor(min, max) {
         this.min = min;
         this.max = max;
@@ -18,6 +19,7 @@ export class RangeValidationRule {
 }
 
 export class LengthValidationRule {
+
     constructor(min, max) {
         this.min = min;
         this.max = max;
@@ -31,6 +33,7 @@ export class LengthValidationRule {
 }
 
 export class CompositeValidationRule {
+    
     constructor(rules) {
         this.rules = rules;
     }
