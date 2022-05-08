@@ -74,7 +74,7 @@ namespace OrderSystem.Controllers
                 return BadRequest();
 
             var result = await _customerRepository.AddAsync(customer);
-            return CreatedAtAction("GetCustomer", new { id = customer.CustomerId }, customer);
+            return CreatedAtAction("GetCustomer", new { id = result.CustomerId }, result);
         }
 
         [HttpPut]
