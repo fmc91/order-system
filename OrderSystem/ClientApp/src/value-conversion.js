@@ -13,6 +13,6 @@ export const NumberConverter = {
         return value ? Number(value) : 0;
     },
     convertFromModelType(value) {
-        return typeof value === "number" ? String(value) : 0;
+        return typeof value === "number" ? String(value) : "0";
     }
 };
