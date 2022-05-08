@@ -1,7 +1,8 @@
-﻿using DomainLayer;
-using DomainLayer.OrderModel;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using DataLayer;
+using DataLayer.Model;
+using OrderSystem.Model;
 
 namespace OrderSystem.Controllers
 {
@@ -9,64 +10,53 @@ namespace OrderSystem.Controllers
     [ApiController]
     public class OrderController : ControllerBase
     {
-        private IOrderService _orderService;
+        private readonly IRepository<Order> _orderRepository;
 
-        public OrderController(IOrderService orderService)
+        public OrderController(RepositoryProvider repositoryProvider)
         {
-            _orderService = orderService;
+            _orderRepository = repositoryProvider.GetRepository<Order>();
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAllOrdersAsync(int page = 0, int itemsPerPage = 20)
         {
-            var result = await _orderService.GetAllOrdersAsync(page, itemsPerPage);
+            var result = await _orderRepository.QueryAsync<OrderModel>(x => x
+                .Paginate(page, itemsPerPage));
+
             return Ok(result);
         }
 
         [HttpGet("{id:int}")]
         public async Task<IActionResult> GetOrderAsync(int id)
         {
-            try
-            {
-                var result = await _orderService.GetOrderByIdAsync(id);
-                return Ok(result);
-            }
-            catch (EntityNotFoundException ex)
-            {
-                return NotFound(new { errorMessage = ex.Message });
-            }
+            if (!await _orderRepository.ExistsAsync(id))
+                return NotFound();
+
+            var result = _orderRepository.GetByIdAsync<OrderModel>(id);
+            return Ok(result);
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateOrderAsync([FromBody] Order order)
+        public async Task<IActionResult> CreateOrderAsync([FromBody] OrderModel order)
         {
-            try
-            {
-                var result = await _orderService.CreateOrderAsync(order);
-                return CreatedAtAction("GetOrder", new { id = result.OrderId }, result);
-            }
-            catch (InvalidOperationException ex)
-            {
-                return BadRequest(new { errorMessage = ex.Message });
-            }
+            if (order.OrderId != 0)
+                return BadRequest();
+
+            var result = await _orderRepository.AddAsync(order);
+            return CreatedAtAction("GetOrder", new { id = result.OrderId }, result);
         }
 
         [HttpPut]
-        public async Task<IActionResult> UpdateOrderAsync([FromBody] Order order)
+        public async Task<IActionResult> UpdateOrderAsync([FromBody] OrderModel order)
         {
-            try
-            {
-                await _orderService.UpdateOrderAsync(order);
-                return NoContent();
-            }
-            catch (EntityNotFoundException ex)
-            {
-                return NotFound(new { errorMessage = ex.Message });
-            }
-            catch (InvalidOperationException ex)
-            {
-                return BadRequest(new { errorMessage = ex.Message });
-            }
+            if (order.OrderId == 0)
+                return BadRequest();
+
+            if (!await _orderRepository.ExistsAsync(order.OrderId))
+                return NotFound();
+
+            await _orderRepository.UpdateAsync(order.OrderId, order);
+            return NoContent();
         }
     }
 }
