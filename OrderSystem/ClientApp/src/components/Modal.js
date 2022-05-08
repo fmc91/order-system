@@ -10,9 +10,15 @@ export default function Modal(props) {
         document.getElementById("backdrop-root")
     );
 
+    const header = props.header &&
+        <div className={styles.modalHeader}>
+            {props.header}
+        </div>;
+
     const modal = ReactDOM.createPortal(
         <div className={styles.modalContainer}>
             <div className={styles.modal}>
+                {header}
                 {props.children}
             </div>
         </div>,

@@ -1,5 +1,5 @@
 
-export class IsTruthyValidationRule {
+export class RequiredValidationRule {
     validate(value) {
         return !!value;
     }

@@ -8,7 +8,7 @@ export default function ProductList(props) {
 
     const context = useContext(ProductsContext);
 
-    useEffect(() => { context.loadProducts(); }, []);
+    useEffect(() => context.loadProducts(), []);
 
     return (
         <div className={styles.listContainer}>

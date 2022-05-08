@@ -1,29 +1,31 @@
-import React, { useContext, useMemo } from "react";
+import React, { useContext, useMemo, useState } from "react";
 import Modal from "./Modal";
 import InputGroup from "./forms/InputGroup";
 import FormContext from "./forms/form-context";
 import ProductsContext from "../contexts/products-context";
 import { InputContextProvider } from "./forms/input-context";
 import { NumberConverter } from "../value-conversion";
-import { IsTruthyValidationRule } from "../validation";
+import { RequiredValidationRule } from "../validation";
 
 export default function EditProductModal(props) {
 
     const formCtx = useContext(FormContext);
     const productsContext = useContext(ProductsContext);
 
+    const [initialValues,] = useState(productsContext.products.find(p => p.productId === props.productId));
+
     function handleSubmit() {
         formCtx.onSubmit();
         props.onDismiss();
     }
 
-    const initialValues = useMemo(() => productsContext.products.find(p => p.productId === props.productId), [productsContext.products]);
+    //const initialValues = useMemo(() => productsContext.products.find(p => p.productId === props.productId), [productsContext.products]);
 
-    const truthyRule = useMemo(() => new IsTruthyValidationRule(), []);
+    const requiredRule = useMemo(() => new RequiredValidationRule(), []);
 
     return (
-        <Modal>
-            <InputContextProvider propertyName="name" initialValue={initialValues.name} validation={truthyRule}>
+        <Modal header="Edit Product">
+            <InputContextProvider propertyName="name" initialValue={initialValues.name} validation={requiredRule}>
                 <InputGroup label="Name" type="text"
                     validationMessage="Please enter a name."/>
             </InputContextProvider>
