@@ -31,6 +31,18 @@ export function InputContextProvider(props) {
             inputValue;
 
         formCtx.setProperty(props.propertyName, modelValue);
+
+        if (props.validation)
+        {
+            const isValid = props.validation.validate(modelValue);
+            setValid(isValid);
+
+            if (isValid)
+                formCtx.removeValidationError(props.propertyName);
+            else
+                formCtx.addValidationError(props.propertyName);
+        }
+
     }, []);
 
     const handleInputChange = useCallback(newValue =>

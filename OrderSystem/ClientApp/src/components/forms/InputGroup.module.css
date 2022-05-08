@@ -1,0 +1,19 @@
+.inputGroup {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+
+.inputGroup label {
+    display: block;
+    margin-bottom: 2px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.inputGroup p.validationMessage {
+    margin-top: 2px;
+    margin-bottom: 0;
+    font-size: 10pt;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: red;
+}

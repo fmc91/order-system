@@ -31,7 +31,7 @@ export default function ProductCard(props) {
                 <div className={classList([styles.price, layout.dockItem])}>{price}</div>
             </div>
 
-            <div className={classList([layout.autoDockContainer, layout.autoDockContainerRight, styles.buttonStrip])}>
+            <div className={classList([layout.autoDockContainer, layout.dockItemsRight, styles.buttonStrip])}>
                 <button
                     className={classList([button.button, button.buttonDanger, layout.dockItem])}
                     onClick={() => props.onDeleteButtonClick(props.product.productId)}>

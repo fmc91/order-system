@@ -18,6 +18,25 @@
     background-color: rgb(75, 170, 240);
 }
 
+.buttonPrimary:disabled {
+    background-color: rgb(130, 200, 250);
+    cursor: default;
+}
+
+.buttonAccept {
+    background-color: rgb(55, 185, 55);
+    color: white;
+}
+
+.buttonAccept:active {
+    background-color: rgb(65, 200, 65);
+}
+
+.buttonAccept:disabled {
+    background-color: rgb(110, 210, 115);
+    cursor: default;
+}
+
 .buttonDanger {
     background-color: rgb(235, 35, 35);
     color: white;
@@ -25,4 +44,9 @@
 
 .buttonDanger:active {
     background-color: rgb(240, 65, 65);
+}
+
+.buttonDanger:disabled {
+    background-color: rgb(250, 130, 130);
+    cursor: default;
 }

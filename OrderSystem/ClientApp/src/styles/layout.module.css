@@ -18,12 +18,86 @@
     display: flex;
 }
 
-.autoDockContainerLeft {
+.autoDockContainer.dockItemsLeft {
     flex-direction: row;
     justify-content: start;
 }
 
-.autoDockContainerRight {
+.autoDockContainer.dockItemsRight {
     flex-direction: row;
     justify-content: end;
+}
+
+.autoDockContainer.itemGapXSmall {
+    column-gap: 0.625rem;
+}
+
+.autoDockContainer.itemGapSmall {
+    column-gap: 1.25rem;
+}
+
+.autoDockContainer.itemGapMedium {
+    column-gap: 2.5rem;
+}
+
+.autoDockContainer.itemGapLarge {
+    column-gap: 5rem;
+}
+
+.autoDockContainer.itemGapXLarge {
+    column-gap: 10rem;
+}
+
+.row {
+    display: flex;
+    flex-direction: row;
+}
+
+.item {
+    flex: 1;
+}
+
+.itemDouble {
+    flex: 2;
+}
+
+.itemTriple {
+    flex: 3;
+}
+
+.row.itemGapXSmall {
+    column-gap: 0.625rem;
+}
+
+.row.itemGapSmall {
+    column-gap: 1.25rem;
+}
+
+.row.itemGapMedium {
+    column-gap: 2.5rem;
+}
+
+.row.itemGapLarge {
+    column-gap: 5rem;
+}
+
+.row.itemGapXLarge {
+    column-gap: 10rem;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+}
+
+.container.rowGapSmall {
+    row-gap: 0.5rem;
+}
+
+.container.rowGapMedium {
+    row-gap: 1rem;
+}
+
+.container.rowGapLarge {
+    row-gap: 2rem;
 }
