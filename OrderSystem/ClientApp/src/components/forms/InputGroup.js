@@ -1,5 +1,4 @@
 import React, { useContext } from "react";
-import Input from "./Input.js";
 import InputContext from "./input-context";
 
 import styles from "./InputGroup.module.css";
@@ -16,11 +15,7 @@ export default function InputGroup(props) {
     return (
         <div className={styles.inputGroup}>
             <label>{props.label}</label>
-            <Input
-                type={props.type}
-                min={props.min ?? undefined}
-                max={props.max ?? undefined}
-                step={props.step ?? undefined}/>
+            <props.renderInput key={props.inputKey}/>
             {validationMessage}
         </div>
     );

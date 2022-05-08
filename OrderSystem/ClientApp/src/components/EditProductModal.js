@@ -1,4 +1,4 @@
-import React, { useContext, useMemo, useState } from "react";
+import React, { useContext, useMemo, useState, useCallback } from "react";
 import Modal from "./Modal";
 import InputGroup from "./forms/InputGroup";
 import FormContext from "./forms/form-context";
@@ -10,6 +10,7 @@ import classList from "../class-list";
 
 import layout from "../styles/layout.module.css";
 import button from "../styles/button.module.css";
+import Input from "./forms/Input";
 
 export default function EditProductModal(props) {
 
@@ -27,6 +28,10 @@ export default function EditProductModal(props) {
     const minPriceRule = useMemo(() => new RangeValidationRule(0.01), []);
     const priceRule = useMemo(() => new CompositeValidationRule([requiredRule, minPriceRule]));
 
+    const textInput = useCallback(() => <Input type="text"/>, []);
+
+    const numberInput = useCallback(() => <Input type="number" min={0.01} step={0.01}/>, []);
+
     return (
         <Modal header="Edit Product">
             <div className={classList([layout.container, layout.rowGapMedium])}>
@@ -37,7 +42,10 @@ export default function EditProductModal(props) {
                             initialValue={initialValues.name}
                             validation={requiredRule}>
                             <InputGroup
-                                label="Name" type="text"
+                                label="Name"
+                                renderInput={textInput}
+                                inputKey="editProduct__name"
+                                //type="text"
                                 validationMessage="Please enter a name."/>
                         </InputContextProvider>
                     </div>
@@ -48,7 +56,10 @@ export default function EditProductModal(props) {
                             valueConverter={NumberConverter}
                             validation={priceRule}>
                             <InputGroup
-                                label="Price" type="number" min={0.01} step={0.01}
+                                label="Price"
+                                renderInput={numberInput}
+                                inputKey="editProduct__price"
+                                //type="number" min={0.01} step={0.01}
                                 validationMessage="Please enter a valid price."/>
                         </InputContextProvider>
                     </div>
@@ -56,7 +67,11 @@ export default function EditProductModal(props) {
                 <div className={layout.row}>
                     <div className={layout.item}>
                         <InputContextProvider propertyName="description" initialValue={initialValues.description}>
-                            <InputGroup label="Description" type="text"/>
+                            <InputGroup
+                                //type="text"
+                                label="Description"
+                                renderInput={textInput}
+                                inputKey="editProduct__desc"/>
                         </InputContextProvider>
                     </div>
                 </div>
