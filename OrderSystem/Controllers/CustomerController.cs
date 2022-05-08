@@ -25,8 +25,7 @@ namespace OrderSystem.Controllers
         {
             var result = await _customerRepository.QueryAsync<CustomerModel>(x => x
                 .OrderBy(c => c.Name)
-                .Skip(page * itemsPerPage)
-                .Take(itemsPerPage));
+                .Paginate(page, itemsPerPage));
 
             return Ok(result);
         }
@@ -37,8 +36,7 @@ namespace OrderSystem.Controllers
             var result = await _customerRepository.QueryAsync<CustomerModel>(x => x
                 .Where(c => c.Name.Contains(query))
                 .OrderBy(c => c.Name)
-                .Skip(page * itemsPerPage)
-                .Take(itemsPerPage));
+                .Paginate(page, itemsPerPage));
 
             return Ok(result);
         }
@@ -61,8 +59,7 @@ namespace OrderSystem.Controllers
 
             var result = await _orderRepository.QueryAsync<OrderModel>(x => x
                 .Where(o => o.CustomerId == id)
-                .Skip(page * itemsPerPage)
-                .Take(itemsPerPage));
+                .Paginate(page, itemsPerPage));
 
             return Ok(result);
         }

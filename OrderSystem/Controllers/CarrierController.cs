@@ -25,8 +25,7 @@ namespace OrderSystem.Controllers
         {
             var result = await _carrierRepository.QueryAsync<CarrierModel>(x => x
                 .OrderBy(c => c.Name)
-                .Skip(page * itemsPerPage)
-                .Take(itemsPerPage));
+                .Paginate(page, itemsPerPage));
 
             return Ok(result);
         }
@@ -49,8 +48,7 @@ namespace OrderSystem.Controllers
 
             var result = await _orderRepository.QueryAsync<OrderModel>(x => x
                 .Where(o => o.CarrierId == id)
-                .Skip(page * itemsPerPage)
-                .Take(itemsPerPage));
+                .Paginate(page, itemsPerPage));
             
             return Ok(result);
         }

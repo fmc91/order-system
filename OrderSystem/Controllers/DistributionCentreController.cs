@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using DataLayer;
 using DataLayer.Model;
 using OrderSystem.Model;
+using System.Linq.Expressions;
 
 namespace OrderSystem.Controllers
 {
@@ -23,16 +24,15 @@ namespace OrderSystem.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllDistributionCentresAsync(string? country = null, int page = 0, int itemsPerPage = 20)
         {
-            var result = country == null ?
-                await _distributionCentreRepository.QueryAsync<DistributionCentreModel>(x => x
-                    .OrderBy(c => c.Name)
-                    .Skip(page * itemsPerPage)
-                    .Take(itemsPerPage)) :
-                await _distributionCentreRepository.QueryAsync<DistributionCentreModel>(x => x
-                    .Where(c => c.DistributionCentreAddress.Address.Country.CountryCode == country)
-                    .OrderBy(c => c.Name)
-                    .Skip(page * itemsPerPage)
-                    .Take(itemsPerPage));
+            Expression<Func<DistributionCentre, bool>> whereCondition =
+                country == null ?
+                    c => true :
+                    c => c.DistributionCentreAddress.Address.Country.CountryCode == country;
+
+            var result = await _distributionCentreRepository.QueryAsync<DistributionCentreModel>(x => x
+                .Where(whereCondition)
+                .OrderBy(c => c.Name)
+                .Paginate(page, itemsPerPage));
 
             return Ok(result);
         }
@@ -43,8 +43,7 @@ namespace OrderSystem.Controllers
             var result = await _distributionCentreRepository.QueryAsync<DistributionCentreModel>(x => x
                 .Where(c => c.Name.Contains(query))
                 .OrderBy(c => c.Name)
-                .Skip(page * itemsPerPage)
-                .Take(itemsPerPage));
+                .Paginate(page, itemsPerPage));
 
             return Ok(result);
         }
@@ -68,8 +67,7 @@ namespace OrderSystem.Controllers
             var result = await _stockItemRepository.QueryAsync<StockItemModel>(x => x
                 .Where(i => i.DistributionCentreId == id)
                 .OrderBy(i => i.Product.Name)
-                .Skip(page * itemsPerPage)
-                .Take(itemsPerPage));
+                .Paginate(page, itemsPerPage));
 
             return Ok(result);
         }

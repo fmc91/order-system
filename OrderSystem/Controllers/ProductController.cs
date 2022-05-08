@@ -28,8 +28,7 @@ namespace OrderSystem.Controllers
         {
             var result = await _productRepository.QueryAsync<ProductModel>(x => x
                 .OrderBy(p => p.Name)
-                .Skip(page * itemsPerPage)
-                .Take(itemsPerPage));
+                .Paginate(page, itemsPerPage));
 
             return Ok(result);
         }
@@ -40,8 +39,7 @@ namespace OrderSystem.Controllers
             var result = await _productRepository.QueryAsync<ProductModel>(x => x
                 .Where(p => p.Name.Contains(query))
                 .OrderBy(p => p.Name)
-                .Skip(page * itemsPerPage)
-                .Take(itemsPerPage));
+                .Paginate(page, itemsPerPage));
 
             return Ok(result);
         }
@@ -64,8 +62,7 @@ namespace OrderSystem.Controllers
 
             var result = await _orderRepository.QueryAsync<ProductModel>(x => x
                 .Where(o => o.OrderItems.Any(p => p.ProductId == id))
-                .Skip(page * itemsPerPage)
-                .Take(itemsPerPage));
+                .Paginate(page, itemsPerPage));
 
             return Ok(result);
         }
@@ -78,8 +75,7 @@ namespace OrderSystem.Controllers
 
             var result = await _stockItemRepository.QueryAsync<ProductModel>(x => x
                 .Where(i => i.ProductId == id)
-                .Skip(page * itemsPerPage)
-                .Take(itemsPerPage));
+                .Paginate(page, itemsPerPage));
 
             return Ok(result);
         }
