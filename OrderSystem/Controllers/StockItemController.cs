@@ -1,7 +1,8 @@
-﻿using DomainLayer;
-using DomainLayer.DistributionCentreModel;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using DataLayer;
+using DataLayer.Model;
+using OrderSystem.Model;
 
 namespace OrderSystem.Controllers
 {
@@ -9,43 +10,41 @@ namespace OrderSystem.Controllers
     [ApiController]
     public class StockItemController : ControllerBase
     {
-        private readonly IDistributionCentreService _distributionCentreController;
+        private readonly IRepository<StockItem> _stockItemRepository;
 
-        public StockItemController(IDistributionCentreService distributionCentreController)
+        public StockItemController(RepositoryProvider repositoryProvider)
         {
-            _distributionCentreController = distributionCentreController;
+            _stockItemRepository = repositoryProvider.GetRepository<StockItem>();
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateStockItemAsync([FromBody] StockItem stockItem)
+        public async Task<IActionResult> CreateStockItemAsync([FromBody] StockItemModel stockItem)
         {
-            try
-            {
-                var result = await _distributionCentreController.CreateStockItemAsync(stockItem);
-                return NoContent();
-            }
-            catch (InvalidOperationException ex)
-            {
-                return BadRequest(new { errorMessage = ex.Message });
-            }
+            bool isBadRequest =
+                stockItem.DistributionCentreId == 0 ||
+                stockItem.ProductId == 0 ||
+                await _stockItemRepository.ExistsAsync(new { stockItem.DistributionCentreId, stockItem.ProductId });
+
+            if (isBadRequest)
+                return BadRequest();
+
+            await _stockItemRepository.AddAsync(stockItem);
+            return NoContent();
         }
 
         [HttpPut]
-        public async Task<IActionResult> UpdateStockItemAsync([FromBody] StockItem stockItem)
+        public async Task<IActionResult> UpdateStockItemAsync([FromBody] StockItemModel stockItem)
         {
-            try
-            {
-                await _distributionCentreController.UpdateStockItemAsync(stockItem);
-                return NoContent();
-            }
-            catch (EntityNotFoundException ex)
-            {
-                return NotFound(new { errorMessage = ex.Message });
-            }
-            catch (InvalidOperationException ex)
-            {
-                return BadRequest(new { errorMessage = ex.Message });
-            }
+            bool isBadRequest =
+                stockItem.DistributionCentreId == 0 ||
+                stockItem.ProductId == 0 ||
+                !await _stockItemRepository.ExistsAsync(new { stockItem.DistributionCentreId, stockItem.ProductId });
+
+            if (isBadRequest)
+                return BadRequest();
+
+            await _stockItemRepository.UpdateAsync(new { stockItem.DistributionCentreId, stockItem.ProductId }, stockItem);
+            return NoContent();
         }
     }
 }
