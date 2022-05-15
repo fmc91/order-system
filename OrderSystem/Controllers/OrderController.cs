@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using DataLayer;
 using DataLayer.Model;
 using OrderSystem.Model;
+using DataLayer.Repositories;
 
 namespace OrderSystem.Controllers
 {
@@ -10,18 +11,17 @@ namespace OrderSystem.Controllers
     [ApiController]
     public class OrderController : ControllerBase
     {
-        private readonly IRepository<Order> _orderRepository;
+        private readonly IOrderRepository _orderRepository;
 
-        public OrderController(RepositoryProvider repositoryProvider)
+        public OrderController(IOrderRepository orderRepository)
         {
-            _orderRepository = repositoryProvider.GetRepository<Order>();
+            _orderRepository = orderRepository;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAllOrdersAsync(int page = 0, int itemsPerPage = 20)
         {
-            var result = await _orderRepository.QueryAsync<OrderModel>(x => x
-                .Paginate(page, itemsPerPage));
+            var result = await _orderRepository.GetAllAsync<OrderModel>(page, itemsPerPage);
 
             return Ok(result);
         }

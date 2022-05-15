@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using DataLayer;
 using DataLayer.Model;
 using OrderSystem.Model;
+using DataLayer.Repositories;
 
 namespace OrderSystem.Controllers
 {
@@ -10,22 +11,20 @@ namespace OrderSystem.Controllers
     [ApiController]
     public class CategoryController : ControllerBase
     {
-        private readonly IRepository<Category> _categoryRepository;
+        private readonly ICategoryRepository _categoryRepository;
 
-        private readonly IRepository<Product> _productRepository;
+        private readonly IProductRepository _productRepository;
 
-        public CategoryController(RepositoryProvider repositoryProvider)
+        public CategoryController(ICategoryRepository categoryRepository, IProductRepository productRepository)
         {
-            _categoryRepository = repositoryProvider.GetRepository<Category>();
-            _productRepository = repositoryProvider.GetRepository<Product>();
+            _categoryRepository = categoryRepository;
+            _productRepository = productRepository;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAllCategoriesAsync(int page = 0, int itemsPerPage = 20)
         {
-            var result = await _categoryRepository.QueryAsync<CategoryModel>(x => x
-                .OrderBy(c => c.Name)
-                .Paginate(page, itemsPerPage));
+            var result = await _categoryRepository.GetAllAsync<CategoryModel>(page, itemsPerPage);
 
             return Ok(result);
         }
@@ -33,10 +32,7 @@ namespace OrderSystem.Controllers
         [HttpGet("search")]
         public async Task<IActionResult> GetCategoriesByNameSearchAsync(string query, int page = 0, int itemsPerPage = 20)
         {
-            var result = await _categoryRepository.QueryAsync<CategoryModel>(x => x
-                .Where(c => c.Name.Contains(query))
-                .OrderBy(x => x.Name)
-                .Paginate(page, itemsPerPage));
+            var result = await _categoryRepository.GetByNameSearchAsync<CategoryModel>(query, page, itemsPerPage);
 
             return Ok(result);
         }
@@ -54,10 +50,7 @@ namespace OrderSystem.Controllers
         [HttpGet("{id:int}/product")]
         public async Task<IActionResult> GetProductsByCategoryAsync(int id, int page = 0, int itemsPerPage = 20)
         {
-            var result = await _productRepository.QueryAsync<ProductModel>(x => x
-                .Where(p => p.CategoryId == id)
-                .OrderBy(p => p.Name)
-                .Paginate(page, itemsPerPage));
+            var result = await _productRepository.GetByCategoryAsync<ProductModel>(id, page, itemsPerPage);
 
             return Ok(result);
         }

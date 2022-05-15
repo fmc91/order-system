@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using DataLayer;
 using DataLayer.Model;
 using OrderSystem.Model;
+using DataLayer.Repositories;
 
 namespace OrderSystem.Controllers
 {
@@ -10,11 +11,11 @@ namespace OrderSystem.Controllers
     [ApiController]
     public class StockItemController : ControllerBase
     {
-        private readonly IRepository<StockItem> _stockItemRepository;
+        private readonly IStockItemRepository _stockItemRepository;
 
-        public StockItemController(RepositoryProvider repositoryProvider)
+        public StockItemController(IStockItemRepository stockItemRepository)
         {
-            _stockItemRepository = repositoryProvider.GetRepository<StockItem>();
+            _stockItemRepository = stockItemRepository;
         }
 
         [HttpPost]

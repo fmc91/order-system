@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using DataLayer;
 using DataLayer.Model;
 using OrderSystem.Model;
+using DataLayer.Repositories;
 
 namespace OrderSystem.Controllers
 {
@@ -10,22 +11,20 @@ namespace OrderSystem.Controllers
     [ApiController]
     public class CarrierController : ControllerBase
     {
-        private readonly IRepository<Carrier> _carrierRepository;
+        private readonly ICarrierRepository _carrierRepository;
 
-        private readonly IRepository<Order> _orderRepository;
+        private readonly IOrderRepository _orderRepository;
 
-        public CarrierController(RepositoryProvider repositoryProvider)
+        public CarrierController(ICarrierRepository carrierRepository, IOrderRepository orderRepository)
         {
-            _carrierRepository = repositoryProvider.GetRepository<Carrier>();
-            _orderRepository = repositoryProvider.GetRepository<Order>();
+            _carrierRepository = carrierRepository;
+            _orderRepository = orderRepository;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAllCarriersAsync(int page = 0, int itemsPerPage = 20)
         {
-            var result = await _carrierRepository.QueryAsync<CarrierModel>(x => x
-                .OrderBy(c => c.Name)
-                .Paginate(page, itemsPerPage));
+            var result = await _carrierRepository.GetAllAsync<CarrierModel>(page, itemsPerPage);
 
             return Ok(result);
         }
@@ -46,9 +45,7 @@ namespace OrderSystem.Controllers
             if (!await _carrierRepository.ExistsAsync(id))
                 return NotFound();
 
-            var result = await _orderRepository.QueryAsync<OrderModel>(x => x
-                .Where(o => o.CarrierId == id)
-                .Paginate(page, itemsPerPage));
+            var result = await _orderRepository.GetByCarrierAsync<OrderModel>(id, page, itemsPerPage);
             
             return Ok(result);
         }

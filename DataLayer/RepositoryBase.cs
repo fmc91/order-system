@@ -8,13 +8,13 @@ using AutoMapper;
 
 namespace DataLayer
 {
-    public class Repository<TEntity> : IRepository<TEntity> where TEntity : class
+    public class RepositoryBase<TEntity> where TEntity : class
     {
         private readonly OrderSystemContext _db;
 
         private readonly IMapper _mapper;
 
-        public Repository(OrderSystemContext db, IMapper mapper)
+        public RepositoryBase(OrderSystemContext db, IMapper mapper)
         {
             _db = db;
             _mapper = mapper;
@@ -23,34 +23,6 @@ namespace DataLayer
         public async Task<bool> ExistsAsync(object id)
         {
             return await _db.Set<TEntity>().FindAsync(id) != null;
-        }
-
-        public async Task<IList<TModel>> GetAllAsync<TModel>()
-        {
-            var entities = await _db.Set<TEntity>().ToListAsync();
-
-            return _mapper.Map<List<TModel>>(entities);
-        }
-
-        public async Task<IList<TModel>> QueryAsync<TModel>(Func<IQueryable<TEntity>, IQueryable<TEntity>> query)
-        {
-            var queryResult = await query(_db.Set<TEntity>()).ToListAsync();
-
-            return _mapper.Map<List<TModel>>(queryResult);
-        }
-
-        public async Task<TModel> QuerySingleAsync<TModel>(Func<IQueryable<TEntity>, Task<TEntity>> query)
-        {
-            var queryResult = await query(_db.Set<TEntity>());
-
-            return _mapper.Map<TModel>(queryResult);
-        }
-
-        public async Task<TModel?> QuerySingleOrDefaultAsync<TModel>(Func<IQueryable<TEntity>, Task<TEntity?>> query)
-        {
-            var queryResult = await query(_db.Set<TEntity>());
-
-            return queryResult == null ? default : _mapper.Map<TModel>(queryResult);
         }
 
         public async Task<TModel> GetByIdAsync<TModel>(object id)
@@ -87,6 +59,27 @@ namespace DataLayer
 
             _db.Set<TEntity>().Remove(entity);
             await _db.SaveChangesAsync();
+        }
+
+        protected async Task<IList<TModel>> QueryAsync<TModel>(Func<IQueryable<TEntity>, IQueryable<TEntity>> query)
+        {
+            var queryResult = await query(_db.Set<TEntity>()).ToListAsync();
+
+            return _mapper.Map<List<TModel>>(queryResult);
+        }
+
+        protected async Task<TModel> QuerySingleAsync<TModel>(Func<IQueryable<TEntity>, Task<TEntity>> query)
+        {
+            var queryResult = await query(_db.Set<TEntity>());
+
+            return _mapper.Map<TModel>(queryResult);
+        }
+
+        protected async Task<TModel?> QuerySingleOrDefaultAsync<TModel>(Func<IQueryable<TEntity>, Task<TEntity?>> query)
+        {
+            var queryResult = await query(_db.Set<TEntity>());
+
+            return queryResult == null ? default : _mapper.Map<TModel>(queryResult);
         }
     }
 }

@@ -7,6 +7,7 @@ using DataLayer;
 using DataLayer.Model;
 using OrderSystem.Model;
 using OrderSystem.Profiles;
+using DataLayer.Repositories;
 
 namespace OrderSystem
 {
@@ -62,11 +63,14 @@ namespace OrderSystem
 
             services.AddSingleton<AutoMapper.IConfigurationProvider>(CreateMapperConfig(services));
 
-            services.AddScoped<RepositoryProvider>();
-
-            services.AddScoped<IRepository<Product>, Repository<Product>>()
-                .AddScoped<IRepository<Order>, Repository<Order>>()
-                .AddScoped<IRepository<StockItem>, Repository<StockItem>>();
+            services.AddScoped<ICarrierRepository, CarrierRepository>()
+                .AddScoped<ICategoryRepository, CategoryRepository>()
+                .AddScoped<ICustomerRepository, CustomerRepository>()
+                .AddScoped<IDistributionCentreRepository, DistributionCentreRepository>()
+                .AddScoped<IOrderRepository, OrderRepository>()
+                .AddScoped<IProductRepository, ProductRepository>()
+                .AddScoped<IRegionRepository, RegionRepository>()
+                .AddScoped<IStockItemRepository, StockItemRepository>();
         }
 
         private MapperConfiguration CreateMapperConfig(IServiceCollection services) => new MapperConfiguration(cfg =>

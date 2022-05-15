@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using DataLayer;
 using DataLayer.Model;
 using OrderSystem.Model;
+using DataLayer.Repositories;
 
 namespace OrderSystem.Controllers
 {
@@ -10,25 +11,23 @@ namespace OrderSystem.Controllers
     [ApiController]
     public class ProductController : ControllerBase
     {
-        private readonly IRepository<Product> _productRepository;
+        private readonly IProductRepository _productRepository;
 
-        private readonly IRepository<Order> _orderRepository;
+        private readonly IOrderRepository _orderRepository;
 
-        private readonly IRepository<StockItem> _stockItemRepository;
+        private readonly IStockItemRepository _stockItemRepository;
 
-        public ProductController(RepositoryProvider repositoryProvider)
+        public ProductController(IProductRepository productRepository, IOrderRepository orderRepository, IStockItemRepository stockItemRepository)
         {
-            _productRepository = repositoryProvider.GetRepository<Product>();
-            _orderRepository = repositoryProvider.GetRepository<Order>();
-            _stockItemRepository = repositoryProvider.GetRepository<StockItem>();
+            _productRepository = productRepository;
+            _orderRepository = orderRepository;
+            _stockItemRepository = stockItemRepository;
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetProductsAsync(int page = 0, int itemsPerPage = 20)
+        public async Task<IActionResult> GetAllProductsAsync(int page = 0, int itemsPerPage = 20)
         {
-            var result = await _productRepository.QueryAsync<ProductModel>(x => x
-                .OrderBy(p => p.Name)
-                .Paginate(page, itemsPerPage));
+            var result = await _productRepository.GetAllAsync<ProductModel>(page, itemsPerPage);
 
             return Ok(result);
         }
@@ -36,10 +35,7 @@ namespace OrderSystem.Controllers
         [HttpGet("search")]
         public async Task<IActionResult> GetProductsByNameSearchAsync(string query, int page = 0, int itemsPerPage = 20)
         {
-            var result = await _productRepository.QueryAsync<ProductModel>(x => x
-                .Where(p => p.Name.Contains(query))
-                .OrderBy(p => p.Name)
-                .Paginate(page, itemsPerPage));
+            var result = await _productRepository.GetByNameSearchAsync<ProductModel>(query, page, itemsPerPage);
 
             return Ok(result);
         }
@@ -60,9 +56,7 @@ namespace OrderSystem.Controllers
             if (!await _productRepository.ExistsAsync(id))
                 return NotFound();
 
-            var result = await _orderRepository.QueryAsync<ProductModel>(x => x
-                .Where(o => o.OrderItems.Any(p => p.ProductId == id))
-                .Paginate(page, itemsPerPage));
+            var result = await _orderRepository.GetByProductAsync<ProductModel>(id, page, itemsPerPage);
 
             return Ok(result);
         }
@@ -73,9 +67,7 @@ namespace OrderSystem.Controllers
             if (!await _productRepository.ExistsAsync(id))
                 return NotFound();
 
-            var result = await _stockItemRepository.QueryAsync<ProductModel>(x => x
-                .Where(i => i.ProductId == id)
-                .Paginate(page, itemsPerPage));
+            var result = await _stockItemRepository.GetByProductAsync<ProductModel>(id, page, itemsPerPage);
 
             return Ok(result);
         }

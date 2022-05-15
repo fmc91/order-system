@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using DataLayer;
 using DataLayer.Model;
 using OrderSystem.Model;
+using DataLayer.Repositories;
 
 namespace OrderSystem.Controllers
 {
@@ -10,24 +11,23 @@ namespace OrderSystem.Controllers
     [ApiController]
     public class RegionController : ControllerBase
     {
-        private readonly IRepository<Region> _regionRepository;
+        private readonly IRegionRepository _regionRepository;
 
-        private readonly IRepository<Customer> _customerRepository;
+        private readonly ICustomerRepository _customerRepository;
 
-        private readonly IRepository<Order> _orderRepository;
+        private readonly IOrderRepository _orderRepository;
 
-        public RegionController(RepositoryProvider repositoryProvider)
+        public RegionController(IRegionRepository regionRepository, ICustomerRepository customerRepository, IOrderRepository orderRepository)
         {
-            _regionRepository = repositoryProvider.GetRepository<Region>();
-            _customerRepository = repositoryProvider.GetRepository<Customer>();
-            _orderRepository = repositoryProvider.GetRepository<Order>();
+            _regionRepository = regionRepository;
+            _customerRepository = customerRepository;
+            _orderRepository = orderRepository;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAllRegionsAsync(int page, int itemsPerPage)
         {
-            var result = await _regionRepository.QueryAsync<RegionModel>(x => x
-                .Paginate(page, itemsPerPage));
+            var result = await _regionRepository.GetAllAsync<RegionModel>(page, itemsPerPage);
 
             return Ok(result);
         }
@@ -48,10 +48,7 @@ namespace OrderSystem.Controllers
             if (!await _regionRepository.ExistsAsync(id))
                 return NotFound();
 
-            var result = await _customerRepository.QueryAsync<CustomerModel>(x => x
-                .Where(c => c.RegionId == id)
-                .OrderBy(c => c.Name)
-                .Paginate(page, itemsPerPage));
+            var result = await _customerRepository.GetByRegionAsync<CustomerModel>(id, page, itemsPerPage);
 
             return Ok(result);
         }
@@ -62,8 +59,7 @@ namespace OrderSystem.Controllers
             if (!await _regionRepository.ExistsAsync(id))
                 return NotFound();
 
-            var result = await _orderRepository.QueryAsync<OrderModel>(x => x
-                .Where(o => o.Customer.RegionId == id));
+            var result = await _orderRepository.GetByRegionAsync<OrderModel>(id, page, itemsPerPage);
 
             return Ok(result);
         }

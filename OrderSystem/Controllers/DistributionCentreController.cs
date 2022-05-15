@@ -4,6 +4,7 @@ using DataLayer;
 using DataLayer.Model;
 using OrderSystem.Model;
 using System.Linq.Expressions;
+using DataLayer.Repositories;
 
 namespace OrderSystem.Controllers
 {
@@ -11,28 +12,20 @@ namespace OrderSystem.Controllers
     [ApiController]
     public class DistributionCentreController : ControllerBase
     {
-        private readonly IRepository<DistributionCentre> _distributionCentreRepository;
+        private readonly IDistributionCentreRepository _distributionCentreRepository;
 
-        private readonly IRepository<StockItem> _stockItemRepository;
+        private readonly IStockItemRepository _stockItemRepository;
 
-        public DistributionCentreController(RepositoryProvider repositoryProvider)
+        public DistributionCentreController(IDistributionCentreRepository distributionCentreRepository, IStockItemRepository stockItemRepository)
         {
-            _distributionCentreRepository = repositoryProvider.GetRepository<DistributionCentre>();
-            _stockItemRepository = repositoryProvider.GetRepository<StockItem>();
+            _distributionCentreRepository = distributionCentreRepository;
+            _stockItemRepository = stockItemRepository;
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllDistributionCentresAsync(string? country = null, int page = 0, int itemsPerPage = 20)
+        public async Task<IActionResult> GetAllDistributionCentresAsync(int page = 0, int itemsPerPage = 20, int? countryId = null)
         {
-            Expression<Func<DistributionCentre, bool>> whereCondition =
-                country == null ?
-                    c => true :
-                    c => c.DistributionCentreAddress.Address.Country.CountryCode == country;
-
-            var result = await _distributionCentreRepository.QueryAsync<DistributionCentreModel>(x => x
-                .Where(whereCondition)
-                .OrderBy(c => c.Name)
-                .Paginate(page, itemsPerPage));
+            var result = await _distributionCentreRepository.GetAllAsync<DistributionCentreModel>(page, itemsPerPage, countryId);
 
             return Ok(result);
         }
@@ -40,10 +33,7 @@ namespace OrderSystem.Controllers
         [HttpGet("search")]
         public async Task<IActionResult> GetDistributionCentresByNameSearchAsync(string query, int page = 0, int itemsPerPage = 20)
         {
-            var result = await _distributionCentreRepository.QueryAsync<DistributionCentreModel>(x => x
-                .Where(c => c.Name.Contains(query))
-                .OrderBy(c => c.Name)
-                .Paginate(page, itemsPerPage));
+            var result = await _distributionCentreRepository.GetByNameSearchAsync<DistributionCentreModel>(query, page, itemsPerPage);
 
             return Ok(result);
         }
@@ -64,10 +54,7 @@ namespace OrderSystem.Controllers
             if (!await _distributionCentreRepository.ExistsAsync(id))
                 return NotFound();
 
-            var result = await _stockItemRepository.QueryAsync<StockItemModel>(x => x
-                .Where(i => i.DistributionCentreId == id)
-                .OrderBy(i => i.Product.Name)
-                .Paginate(page, itemsPerPage));
+            var result = await _stockItemRepository.GetByDistributionCentreAsync<StockItemModel>(id, page, itemsPerPage);
 
             return Ok(result);
         }

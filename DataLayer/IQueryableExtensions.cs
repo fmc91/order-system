@@ -1,4 +1,4 @@
-﻿namespace OrderSystem
+﻿namespace DataLayer
 {
     public static class IQueryableExtensions
     {
